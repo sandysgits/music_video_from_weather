@@ -22,8 +22,7 @@ async function loadPyodideAndPackages() {
         await pyodide.loadPackage("micropip");
         await pyodide.runPythonAsync(`
             import micropip
-            await micropip.install('matplotlib')  
-            await micropip.install('js') 
+            await micropip.install('matplotlib')
             await micropip.install('os')
             await micropip.install('pandas')
             await micropip.install('audiolazy')
