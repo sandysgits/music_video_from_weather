@@ -1,5 +1,3 @@
-
-
 let pyodideReady = false; // Tracks if Pyodide is ready
 let pyodide = null;       // Holds the Pyodide instance
 
@@ -135,6 +133,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
 
         // Generate audio (MIDI file)
         const result = await pyodide.runPythonAsync(`
+        print("Loading packages")
         # from js import console
         from pyodide.ffi import to_js
         from midiutil import MIDIFILE
