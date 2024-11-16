@@ -2,6 +2,18 @@ import json
 from flask import Flask, request, jsonify
 from midiutil import MIDIFile  # Example library for MIDI
 import os
+import pandas as pd
+from audiolazy import str2midi
+from midiutil import MIDIFile
+from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
+from functions.make_midi import produce_midi_file
+from functions.download import download_files, load_and_combine_data, data_main
+import requests
+import zipfile
+import io
+import os
+import pandas as pd
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -14,8 +26,20 @@ def generate_assets():
 
     # Create MIDI
     audio_file = f"output_{start_date}_{end_date}_{bpm}.midi"
-    midi = MIDIFile(1)
-    midi.addTempo(0, 0, bpm)
+    # Lade die Datei
+    file_path = 'weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt'
+    files_downloaded = [file_path]
+    #start_date = datetime.strptime(start_time, '%Y%m%d%H%M')
+    #end_date = datetime.strptime(end_time, '%Y%m%d%H%M')
+    data = load_and_combine_data(files_downloaded, start_date, end_date)
+    #data = pd.read_csv(file_path, sep=';', skipinitialspace=True)
+    data = data.iloc[::30]  # Wählt jede 30. Zeile aus (alle 5 min)
+    
+    
+    #instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
+    # Erstelle Midi file aus den Daten:
+    midi = produce_midi_file(data, bpm, start_time)
+    
     with open(f"./assets/audio/{audio_file}", "wb") as output_file:
         midi.writeFile(output_file)
 
