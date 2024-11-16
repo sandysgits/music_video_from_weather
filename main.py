@@ -15,19 +15,12 @@ import os
 import pandas as pd
 from datetime import datetime
 
-app = Flask(__name__)
-
-@app.route('/run-python', methods=['POST'])
-def generate_assets():
-    data = request.json
-    start_date = data['startDate']
-    end_date = data['endDate']
-    bpm = int(data['bpm'])
+def generate_media(start_date, end_date, bpm):
 
     # Create MIDI
     audio_file = f"output_{start_date}_{end_date}_{bpm}.midi"
     # Lade die Datei
-    file_path = 'weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt'
+    file_path = f"./weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt"
     files_downloaded = [file_path]
     #start_date = datetime.strptime(start_time, '%Y%m%d%H%M')
     #end_date = datetime.strptime(end_time, '%Y%m%d%H%M')

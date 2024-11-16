@@ -1,4 +1,96 @@
+
+
+let pyodideReady = false;
+let pyodide = null;
+
+// Load Pyodide and required Python packages
+async function loadPyodideAndPackages() {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage("micropip");
+    await pyodide.runPythonAsync(`
+        import micropip
+        await micropip.install('midiutil')
+    `);
+    pyodideReady = true;
+    console.log("Pyodide and packages are ready.");
+}
+
+loadPyodideAndPackages();
+
+// Function to generate videos
+async function generateVideos() {
+    const canvas1 = document.getElementById("canvas1");
+    const canvas2 = document.getElementById("canvas2");
+
+    const ctx1 = canvas1.getContext("2d");
+    const ctx2 = canvas2.getContext("2d");
+
+    const recorder1 = new MediaRecorder(canvas1.captureStream());
+    const recorder2 = new MediaRecorder(canvas2.captureStream());
+
+    let video1Chunks = [];
+    let video2Chunks = [];
+
+    recorder1.ondataavailable = (event) => video1Chunks.push(event.data);
+    recorder2.ondataavailable = (event) => video2Chunks.push(event.data);
+
+    recorder1.start();
+    recorder2.start();
+
+    // Animate canvas1
+    let t = 0;
+    const interval1 = setInterval(() => {
+        ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+        ctx1.fillStyle = `rgb(${Math.sin(t) * 128 + 128}, 100, 200)`;
+        ctx1.fillRect(t % canvas1.width, 150, 50, 50);
+        t += 5;
+    }, 100);
+
+    // Animate canvas2
+    let y = 0;
+    const interval2 = setInterval(() => {
+        ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        ctx2.beginPath();
+        ctx2.arc(320, y % canvas2.height, 50, 0, 2 * Math.PI);
+        ctx2.fillStyle = `rgb(100, ${Math.cos(y) * 128 + 128}, 150)`;
+        ctx2.fill();
+        y += 5;
+    }, 100);
+
+    // Stop recording after 10 seconds
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+    clearInterval(interval1);
+    clearInterval(interval2);
+    recorder1.stop();
+    recorder2.stop();
+
+    // Process video data
+    recorder1.onstop = () => {
+        const videoBlob = new Blob(video1Chunks, { type: "video/webm" });
+        const videoUrl = URL.createObjectURL(videoBlob);
+        const videoElement = document.createElement("video");
+        videoElement.src = videoUrl;
+        videoElement.controls = true;
+        document.getElementById("graphic-1").appendChild(videoElement);
+    };
+
+    recorder2.onstop = () => {
+        const videoBlob = new Blob(video2Chunks, { type: "video/webm" });
+        const videoUrl = URL.createObjectURL(videoBlob);
+        const videoElement = document.createElement("video");
+        videoElement.src = videoUrl;
+        videoElement.controls = true;
+        document.getElementById("graphic-2").appendChild(videoElement);
+    };
+}
+
+// Event listener for the "Generate" button
 document.getElementById("start-button").addEventListener("click", async () => {
+    if (!pyodideReady) {
+        alert("Pyodide is still loading. Please wait!");
+        return;
+    }
+
     const startDate = document.getElementById("start-date").value;
     const endDate = document.getElementById("end-date").value;
     const bpm = document.getElementById("bpm").value;
@@ -9,19 +101,39 @@ document.getElementById("start-button").addEventListener("click", async () => {
     }
 
     try {
-        const response = await fetch('/run-python', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ startDate, endDate, bpm }),
-        });
+        // Generate audio (MIDI file)
+        const result = await pyodide.runPythonAsync(`
+        from js import console
+        from pyodide.ffi import to_js
+        import main
 
-        const data = await response.json();
-        document.getElementById("audio-player").src = `assets/audio/${data.audioFile}`;
-        document.getElementById("graphic-1").innerHTML = `<video src="assets/video/${data.video1}" controls></video>`;
-        document.getElementById("graphic-2").innerHTML = `<video src="assets/video/${data.video2}" controls></video>`;
+        # Generate MIDI, video, and sync
+        midi_file, video1, video2 = main.generate_media("${startDate}", "${endDate}", int(${bpm}))
+
+        # Return as base64-encoded blobs
+        def get_base64(file_path):
+            with open(file_path, "rb") as file:
+                return file.read().hex()
+
+        midi_blob = get_base64(midi_file)
+        video1_blob = get_base64(video1)
+        video2_blob = get_base64(video2)
+
+        console.log(to_js({"midi": midi_blob, "video1": video1_blob, "video2": video2_blob}))
+    `);
+
+        // Create a downloadable MIDI file
+        const audioBlob = new Blob([result], { type: "audio/midi" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audioPlayer = document.getElementById("audio-player");
+        audioPlayer.src = audioUrl;
+
+        // Generate videos
+        await generateVideos();
+
+        alert("Audio and videos generated successfully!");
     } catch (error) {
         console.error("Error:", error);
+        alert("An error occurred while generating content.");
     }
 });
