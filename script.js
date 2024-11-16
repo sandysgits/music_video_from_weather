@@ -160,8 +160,8 @@ document.getElementById("start-button").addEventListener("click", async () => {
                 print(f"Error importing main: {e}")
         `);
 
-        // Generate audio (MIDI file)
-        const result = await pyodide.runPythonAsync(`
+    // Generate audio (MIDI file)
+    const result = await pyodide.runPythonAsync(`
         print("Loading packages")
         from js import console
         from pyodide.ffi import to_js
