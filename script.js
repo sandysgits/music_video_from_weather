@@ -31,6 +31,7 @@ async function loadPyodideAndPackages() {
             await micropip.install('zipfile')
             await micropip.install('io')
             await micropip.install('datetime')
+            print("Packages installed successfully!")
 
         `);
 
