@@ -15,6 +15,20 @@ async function loadMidiUtil(pyodide) {
     }
 }
 
+async function loadMain(pyodide) {
+    try {
+        const response = await fetch("main.py"); // Path to your main.py file
+        if (!response.ok) {
+            throw new Error("Failed to fetch main.py");
+        }
+        const mainCode = await response.text();
+        pyodide.FS.writeFile("main.py", mainCode);
+        console.log("main.py loaded into Pyodide.");
+    } catch (error) {
+        console.error("Error loading main.py:", error);
+    }
+}
+
 // Load Pyodide and required Python packages
 async function loadPyodideAndPackages() {
     try {
@@ -137,14 +151,20 @@ document.getElementById("start-button").addEventListener("click", async () => {
         console.log("load midiutil")
         // Ensure MIDIUtil is loaded
         await loadMidiUtil(pyodide);
+        await pyodide.runPythonAsync(`
+            print("Testing main.py import...")
+            try:
+                import main
+                print("Successfully imported main!")
+            except Exception as e:
+                print(f"Error importing main: {e}")
+        `);
 
         // Generate audio (MIDI file)
         const result = await pyodide.runPythonAsync(`
         print("Loading packages")
         from js import console
-        print("imported console")
         from pyodide.ffi import to_js
-        print("imported to_js")
         from my_midiutil import MIDIFile
         print("imported midifile")
         import main
