@@ -18,12 +18,17 @@ async function loadPyodideAndPackages() {
         pyodide = await loadPyodide(); // Load Pyodide
         console.log("Pyodide loaded.");
 
+        // Load pre-bundled packages
+        await pyodide.loadPackage("matplotlib");
+        await pyodide.loadPackage("pandas");
+        console.log("Pre-bundled packages loaded successfully.");
+
         // Install Python packages
         await pyodide.loadPackage("micropip");
         await pyodide.runPythonAsync(`
             import micropip
-            await micropip.install('matplotlib')
-            await micropip.install('pandas')
+            # await micropip.install('matplotlib')
+            # await micropip.install('pandas')
             # await micropip.install('audiolazy')
             print("Packages installed successfully!")
 
