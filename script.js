@@ -3,6 +3,15 @@
 let pyodideReady = false;
 let pyodide = null;
 
+let pyodideReadyPromise = null;
+
+async function initPyodide() {
+    // Initialize Pyodide and make it available globally
+    const pyodide = await loadPyodide();
+    await pyodide.loadPackage(["numpy", "matplotlib"]);
+    return pyodide;
+}
+
 // Load Pyodide and required Python packages
 async function loadPyodideAndPackages() {
     pyodide = await loadPyodide();
