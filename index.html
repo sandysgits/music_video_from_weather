@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Data Sonification</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/streamproc/MediaStreamRecorder/MediaStreamRecorder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.3/full/pyodide.js"></script>
 </head>
 <body>
     <header>
@@ -21,10 +24,9 @@
             <button id="start-button">Generate</button>
         </div>
         <div class="output-section">
-            <div class="graphic" id="graphic-1"></div>
-            <div class="graphic" id="graphic-2"></div>
+            <canvas id="canvas1" width="640" height="360"></canvas>
+            <canvas id="canvas2" width="640" height="360"></canvas>
             <audio id="audio-player" controls>
-                <source src="" type="audio/midi">
                 Your browser does not support the audio element.
             </audio>
         </div>
