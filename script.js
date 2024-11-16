@@ -117,7 +117,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         alert("Pyodide is still loading. Please wait!");
         return;
     }
-    console.log("get items")
+
     const startDate = document.getElementById("start-date").value;
     const endDate = document.getElementById("end-date").value;
     const bpm = document.getElementById("bpm").value;
@@ -126,7 +126,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         alert("Please fill out all fields!");
         return;
     }
-    console.log("lets go")
+
     try {
         console.log("load midiutil")
         // Ensure MIDIUtil is loaded
@@ -136,9 +136,9 @@ document.getElementById("start-button").addEventListener("click", async () => {
         const result = await pyodide.runPythonAsync(`
         print("Loading packages")
         # from js import console
-        from pyodide.ffi import to_js
-        from midiutil import MIDIFILE
-        import main
+        # from pyodide.ffi import to_js
+        # from midiutil import MIDIFILE
+        # import main
 
         print("Imported packages")
 
