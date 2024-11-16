@@ -3,6 +3,15 @@
 let pyodideReady = false; // Tracks if Pyodide is ready
 let pyodide = null;       // Holds the Pyodide instance
 
+async function loadMidiUtil(pyodide) {
+    const response = await fetch("midiutil.py"); // Path to the MIDIUtil file
+    const midiutilCode = await response.text();
+
+    // Write the MIDIUtil source code to Pyodide's filesystem
+    pyodide.FS.writeFile("midiutil.py", midiutilCode);
+    console.log("MIDIUtil loaded into Pyodide.");
+}
+
 // Load Pyodide and required Python packages
 async function loadPyodideAndPackages() {
     try {
@@ -13,7 +22,16 @@ async function loadPyodideAndPackages() {
         await pyodide.loadPackage("micropip");
         await pyodide.runPythonAsync(`
             import micropip
-            await micropip.install('midiutil')  # Example package
+            await micropip.install('matplotlib')  
+            await micropip.install('json') 
+            await micropip.install('os')
+            await micropip.install('pandas')
+            await micropip.install('audiolazy')
+            await micropip.install('requests')
+            await micropip.install('zipfile')
+            await micropip.install('io')
+            await micropip.install('datetime')
+
         `);
 
         pyodideReady = true; // Mark as ready
@@ -112,10 +130,14 @@ document.getElementById("start-button").addEventListener("click", async () => {
     }
 
     try {
+        // Ensure MIDIUtil is loaded
+        await loadMidiUtil(pyodide);
+
         // Generate audio (MIDI file)
         const result = await pyodide.runPythonAsync(`
         from js import console
         from pyodide.ffi import to_js
+        from midiutil import MIDIFILE
         import main
 
         # Generate MIDI, video, and sync
