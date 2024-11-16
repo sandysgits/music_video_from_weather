@@ -128,6 +128,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
     }
 
     try {
+        console.log("load midiutil")
         // Ensure MIDIUtil is loaded
         await loadMidiUtil(pyodide);
 
