@@ -1,21 +1,32 @@
 
 
-let pyodideReady = false;
-let pyodide = null;
+let pyodideReady = false; // Tracks if Pyodide is ready
+let pyodide = null;       // Holds the Pyodide instance
 
 // Load Pyodide and required Python packages
 async function loadPyodideAndPackages() {
-    pyodide = await loadPyodide();
-    await pyodide.loadPackage("micropip");
-    await pyodide.runPythonAsync(`
-        import micropip
-        await micropip.install('midiutil')
-    `);
-    pyodideReady = true;
-    console.log("Pyodide and packages are ready.");
+    try {
+        pyodide = await loadPyodide(); // Load Pyodide
+        console.log("Pyodide loaded.");
+
+        // Install Python packages
+        await pyodide.loadPackage("micropip");
+        await pyodide.runPythonAsync(`
+            import micropip
+            await micropip.install('midiutil')  # Example package
+        `);
+
+        pyodideReady = true; // Mark as ready
+        console.log("Pyodide and packages are ready.");
+    } catch (error) {
+        console.error("Error loading Pyodide or packages:", error);
+    }
 }
 
-loadPyodideAndPackages();
+// Initialize Pyodide when the page loads
+window.addEventListener("load", () => {
+    loadPyodideAndPackages();
+});
 
 // Function to generate videos
 async function generateVideos() {
