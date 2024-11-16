@@ -1,8 +1,6 @@
 import json
 from flask import Flask, request, jsonify
 from midiutil import MIDIFile  # Example library for MIDI
-import os
-import pandas as pd
 from audiolazy import str2midi
 from midiutil import MIDIFile
 from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
@@ -24,9 +22,11 @@ def generate_media(start_date, end_date, bpm):
     files_downloaded = [file_path]
     #start_date = datetime.strptime(start_time, '%Y%m%d%H%M')
     #end_date = datetime.strptime(end_time, '%Y%m%d%H%M')
+    print("Loading data...")
     data = load_and_combine_data(files_downloaded, start_date, end_date)
     #data = pd.read_csv(file_path, sep=';', skipinitialspace=True)
     data = data.iloc[::30]  # Wählt jede 30. Zeile aus (alle 5 min)
+    print("Data loaded.")
     
     
     #instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']

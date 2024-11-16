@@ -4,6 +4,7 @@ from midiutil import MIDIFile
 from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
 
 def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
+    print("Generating midi file.")
     # Erstelle eine neue MIDI-Datei mit mehreren Spuren
     midi = MIDIFile(5)  # drei Spuren
     midi.addTrackName(0, 0, "Main Melody")

@@ -140,6 +140,8 @@ document.getElementById("start-button").addEventListener("click", async () => {
         from midiutil import MIDIFILE
         import main
 
+        print("Imported packages")
+
         # Generate MIDI, video, and sync
         midi_file, video1, video2 = main.generate_media("${startDate}", "${endDate}", int(${bpm}))
 
