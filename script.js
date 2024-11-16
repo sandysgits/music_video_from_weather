@@ -135,6 +135,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         // Generate audio (MIDI file)
         const result = await pyodide.runPythonAsync(`
         print("Loading packages")
+        print("wtf")
         from js import console
         print("imported console")
         from pyodide.ffi import to_js
