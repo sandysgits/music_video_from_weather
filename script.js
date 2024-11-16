@@ -121,6 +121,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
     const startDate = document.getElementById("start-date").value;
     const endDate = document.getElementById("end-date").value;
     const bpm = document.getElementById("bpm").value;
+    console.log(startDate);
 
     if (!startDate || !endDate || !bpm) {
         alert("Please fill out all fields!");
