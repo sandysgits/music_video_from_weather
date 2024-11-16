@@ -2,12 +2,17 @@ let pyodideReady = false; // Tracks if Pyodide is ready
 let pyodide = null;       // Holds the Pyodide instance
 
 async function loadMidiUtil(pyodide) {
-    const response = await fetch("midiutil.py"); // Path to the MIDIUtil file
-    const midiutilCode = await response.text();
-
-    // Write the MIDIUtil source code to Pyodide's filesystem
-    pyodide.FS.writeFile("midiutil.py", midiutilCode);
-    console.log("MIDIUtil loaded into Pyodide.");
+    try {
+        const response = await fetch("midiutil.py"); // Path to your midiutil.py file
+        if (!response.ok) {
+            throw new Error("Failed to fetch midiutil.py");
+        }
+        const midiutilCode = await response.text();
+        pyodide.FS.writeFile("midiutil.py", midiutilCode);
+        console.log("MIDIUtil loaded into Pyodide.");
+    } catch (error) {
+        console.error("Error loading MIDIUtil:", error);
+    }
 }
 
 // Load Pyodide and required Python packages
@@ -136,14 +141,14 @@ document.getElementById("start-button").addEventListener("click", async () => {
         // Generate audio (MIDI file)
         const result = await pyodide.runPythonAsync(`
         print("Loading packages")
-        print("wtf")
         from js import console
         print("imported console")
         from pyodide.ffi import to_js
         print("imported to_js")
-        from midiutil import MIDIFILE
+        from midiutil import MIDIFile
         print("imported midifile")
-        # import main
+        import main
+        print("imported main")
 
         print("Imported packages")
 
