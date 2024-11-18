@@ -149,9 +149,9 @@ document.getElementById("start-button").addEventListener("click", async () => {
 
     try {
         console.log("load midiutil and main");
-        await loadMain(pyodide);
         // Ensure MIDIUtil is loaded
         await loadMidiUtil(pyodide);
+        await loadMain(pyodide);
         await pyodide.runPythonAsync(`
             print("Testing main.py import...")
             try:
