@@ -165,32 +165,32 @@ document.getElementById("start-button").addEventListener("click", async () => {
                 print(f"Error importing main: {e}")
         `);
 
-    // Generate audio (MIDI file)
-    const result = await pyodide.runPythonAsync(`
-        print("Loading packages")
-        from js import console
-        from pyodide.ffi import to_js
-        from my_midiutil import MIDIFile
-        print("imported midifile")
-        import main
-        print("imported main")
+        // Generate audio (MIDI file)
+        const result = await pyodide.runPythonAsync(`
+            print("Loading packages")
+            from js import console
+            from pyodide.ffi import to_js
+            from my_midiutil import MIDIFile
+            print("imported midifile")
+            import main
+            print("imported main")
 
-        print("Imported packages")
+            print("Imported packages")
 
-        # Generate MIDI, video, and sync
-        midi_file, video1, video2 = main.generate_media("${startDate}", "${endDate}", int(${bpm}))
+            # Generate MIDI, video, and sync
+            midi_file, video1, video2 = main.generate_media("${startDate}", "${endDate}", int(${bpm}))
 
-        # Return as base64-encoded blobs
-        def get_base64(file_path):
-            with open(file_path, "rb") as file:
-                return file.read().hex()
+            # Return as base64-encoded blobs
+            def get_base64(file_path):
+                with open(file_path, "rb") as file:
+                    return file.read().hex()
 
-        midi_blob = get_base64(midi_file)
-        video1_blob = get_base64(video1)
-        video2_blob = get_base64(video2)
+            midi_blob = get_base64(midi_file)
+            video1_blob = get_base64(video1)
+            video2_blob = get_base64(video2)
 
-        console.log(to_js({"midi": midi_blob, "video1": video1_blob, "video2": video2_blob}))
-    `);
+            console.log(to_js({"midi": midi_blob, "video1": video1_blob, "video2": video2_blob}))
+        `);
 
         // Create a downloadable MIDI file
         const audioBlob = new Blob([result], { type: "audio/midi" });
