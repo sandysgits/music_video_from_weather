@@ -63,9 +63,9 @@ async function loadPyodideAndPackages() {
         // Install Python packages via micropip
         await pyodide.runPythonAsync(`
             import micropip
-            await micropip.install('midiutil')
+            await micropip.install('matplotlib')
         `);
-        console.log("midiutil installed successfully.");
+        console.log("matplotlib installed successfully.");
 
         pyodideReady = true; // Mark as ready
         console.log("Pyodide and packages are ready.");
