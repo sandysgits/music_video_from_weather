@@ -1,18 +1,42 @@
 let pyodideReady = false; // Tracks if Pyodide is ready
 let pyodide = null;       // Holds the Pyodide instance
 
+
 // Load a Python file into Pyodide's virtual filesystem
-async function loadPythonFile(fileName, targetName) {
+async function loadPythonFile(filePath, targetPath) {
     try {
-        const response = await fetch(fileName); // Fetch the file
+        const response = await fetch(filePath);
         if (!response.ok) {
-            throw new Error(`Failed to fetch ${fileName}`);
+            throw new Error(`Failed to fetch ${filePath}`);
         }
         const fileCode = await response.text();
-        pyodide.FS.writeFile(targetName, fileCode); // Write it into Pyodide's FS
-        console.log(`${fileName} loaded into Pyodide as ${targetName}.`);
+        pyodide.FS.writeFile(targetPath, fileCode);
+        console.log(`${filePath} loaded into Pyodide as ${targetPath}.`);
     } catch (error) {
-        console.error(`Error loading ${fileName}:`, error);
+        console.error(`Error loading ${filePath}:`, error);
+    }
+}
+
+// Load the `functions` folder into Pyodide
+async function loadFunctionsFolder(pyodide) {
+    try {
+        // Create the `functions` folder in Pyodide's filesystem
+        pyodide.FS.mkdir("functions");
+
+        // List of files in the `functions` folder
+        const functionFiles = [
+            "functions/download.py",
+            "functions/soni_functions.py",
+            "functions/make_midi.py",
+        ];
+
+        // Load each file into the Pyodide filesystem
+        for (const file of functionFiles) {
+            await loadPythonFile(file, file);
+        }
+        console.log("All functions loaded successfully.");
+    } catch (error) {
+        console.error("Error loading functions folder:", error);
     }
 }
 
@@ -24,9 +48,6 @@ async function loadMidiUtil(pyodide) {
 // Load main.py into Pyodide
 async function loadMain(pyodide) {
     await loadPythonFile("main.py", "main.py");
-    await loadPythonFile("./functions/download.py", "./functions/download.py");
-    await loadPythonFile("./functions/soni_functions.py", "./functions/soni_functions.py");
-    await loadPythonFile("./functions/make_midi.py", "./functions/make_midi.py");
 }
 
 // Load Pyodide and required Python packages
@@ -65,6 +86,12 @@ async function testPythonImports() {
                 print("Successfully imported my_midiutil!")
             except Exception as e:
                 print(f"Error importing my_midiutil: {e}")
+
+            try:
+                from functions.download import download_files
+                print("Successfully imported download_files from functions.download!")
+            except Exception as e:
+                print(f"Error importing from functions.download: {e}")
 
             try:
                 import main
@@ -183,6 +210,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
     try {
         console.log("Loading Python files...");
         await loadMidiUtil(pyodide);
+        await loadFunctionsFolder(pyodide); // Load the functions folder
         await loadMain(pyodide);
 
         console.log("Testing Python imports...");
