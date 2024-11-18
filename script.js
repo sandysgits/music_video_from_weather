@@ -51,6 +51,11 @@ async function loadPyodideAndPackages() {
 
         `);
 
+        // Fetch and load the main.py file
+        const mainPyResponse = await fetch('./main.py'); // Path to main.py
+        const mainPyCode = await mainPyResponse.text();
+        pyodide.runPython(mainPyCode); // Load main.py into Pyodide
+
         pyodideReady = true; // Mark as ready
         console.log("Pyodide and packages are ready.");
     } catch (error) {
