@@ -22,8 +22,8 @@ def generate_media(start_date, end_date, bpm):
     #start_date = datetime.strptime(start_time, '%Y%m%d%H%M')
     #end_date = datetime.strptime(end_time, '%Y%m%d%H%M')
     print("Loading data...")
-    data = load_and_combine_data(files_downloaded, start_date, end_date)
-    #data = pd.read_csv(file_path, sep=';', skipinitialspace=True)
+    #data = load_and_combine_data(files_downloaded, start_date, end_date)
+    data = pd.read_csv(file_path, sep=';', skipinitialspace=True)
     data = data.iloc[::30]  # Wählt jede 30. Zeile aus (alle 5 min)
     print("Data loaded.")
     
