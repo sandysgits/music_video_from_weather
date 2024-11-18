@@ -1,32 +1,32 @@
 let pyodideReady = false; // Tracks if Pyodide is ready
 let pyodide = null;       // Holds the Pyodide instance
 
-async function loadMidiUtil(pyodide) {
+// Load a Python file into Pyodide's virtual filesystem
+async function loadPythonFile(fileName, targetName) {
     try {
-        const response = await fetch("my_midiutil.py"); // Path to your my_midiutil.py file
+        const response = await fetch(fileName); // Fetch the file
         if (!response.ok) {
-            throw new Error("Failed to fetch my_midiutil.py");
+            throw new Error(`Failed to fetch ${fileName}`);
         }
-        const midiutilCode = await response.text();
-        pyodide.FS.writeFile("my_midiutil.py", midiutilCode);
-        console.log("MIDIUtil loaded into Pyodide.");
+        const fileCode = await response.text();
+        pyodide.FS.writeFile(targetName, fileCode); // Write it into Pyodide's FS
+        console.log(`${fileName} loaded into Pyodide as ${targetName}.`);
     } catch (error) {
-        console.error("Error loading MIDIUtil:", error);
+        console.error(`Error loading ${fileName}:`, error);
     }
 }
 
+// Load my_midiutil.py into Pyodide
+async function loadMidiUtil(pyodide) {
+    await loadPythonFile("my_midiutil.py", "my_midiutil.py");
+}
+
+// Load main.py into Pyodide
 async function loadMain(pyodide) {
-    try {
-        const response = await fetch("main.py"); // Path to your main.py file
-        if (!response.ok) {
-            throw new Error("Failed to fetch main.py");
-        }
-        const mainCode = await response.text();
-        pyodide.FS.writeFile("main.py", mainCode);
-        console.log("main.py loaded into Pyodide.");
-    } catch (error) {
-        console.error("Error loading main.py:", error);
-    }
+    await loadPythonFile("main.py", "main.py");
+    await loadPythonFile("./functions/download.py", "./functions/download.py");
+    await loadPythonFile("./functions/soni_functions.py", "./functions/soni_functions.py");
+    await loadPythonFile("./functions/make_midi.py", "./functions/make_midi.py");
 }
 
 // Load Pyodide and required Python packages
@@ -36,20 +36,15 @@ async function loadPyodideAndPackages() {
         console.log("Pyodide loaded.");
 
         // Load pre-bundled packages
-        await pyodide.loadPackage("matplotlib");
-        await pyodide.loadPackage("pandas");
-        console.log("Pre-bundled packages loaded successfully.");
-
-        // Install Python packages
         await pyodide.loadPackage("micropip");
+        console.log("micropip package loaded.");
+
+        // Install Python packages via micropip
         await pyodide.runPythonAsync(`
             import micropip
-            # await micropip.install('matplotlib')
-            # await micropip.install('pandas')
-            # await micropip.install('audiolazy')
-            print("Packages installed successfully!")
-
+            await micropip.install('midiutil')
         `);
+        console.log("midiutil installed successfully.");
 
         pyodideReady = true; // Mark as ready
         console.log("Pyodide and packages are ready.");
@@ -58,10 +53,49 @@ async function loadPyodideAndPackages() {
     }
 }
 
-// Initialize Pyodide when the page loads
-window.addEventListener("load", () => {
-    loadPyodideAndPackages();
-});
+// Check if the loaded Python files can be imported
+async function testPythonImports() {
+    try {
+        await pyodide.runPythonAsync(`
+            import sys
+            sys.path.append('.')  # Add current directory to sys.path
+            print("Testing import of Python modules...")
+            try:
+                import my_midiutil
+                print("Successfully imported my_midiutil!")
+            except Exception as e:
+                print(f"Error importing my_midiutil: {e}")
+
+            try:
+                import main
+                print("Successfully imported main!")
+            except Exception as e:
+                print(f"Error importing main: {e}")
+        `);
+    } catch (error) {
+        console.error("Error testing Python imports:", error);
+    }
+}
+
+// Generate MIDI file using main.py
+async function generateMidi(startDate, endDate, bpm) {
+    try {
+        console.log("Generating MIDI file...");
+        const midiPath = await pyodide.runPythonAsync(`
+            from main import generate_media
+            midi_file, _, _ = generate_media("${startDate}", "${endDate}", int(${bpm}))
+            midi_file
+        `);
+        console.log("MIDI generated at:", midiPath);
+
+        // Read the MIDI file from the virtual filesystem
+        const midiData = pyodide.FS.readFile(midiPath);
+        return midiData;
+    } catch (error) {
+        console.error("Error generating MIDI file:", error);
+        throw error;
+    }
+}
 
 // Function to generate videos
 async function generateVideos() {
@@ -140,7 +174,6 @@ document.getElementById("start-button").addEventListener("click", async () => {
     const startDate = document.getElementById("start-date").value;
     const endDate = document.getElementById("end-date").value;
     const bpm = document.getElementById("bpm").value;
-    console.log(startDate);
 
     if (!startDate || !endDate || !bpm) {
         alert("Please fill out all fields!");
@@ -148,53 +181,24 @@ document.getElementById("start-button").addEventListener("click", async () => {
     }
 
     try {
-        console.log("load midiutil and main");
-        // Ensure MIDIUtil is loaded
+        console.log("Loading Python files...");
         await loadMidiUtil(pyodide);
         await loadMain(pyodide);
-        await pyodide.runPythonAsync(`
-            print("Testing main.py import...")
-            try:
-                import main
-                print("Successfully imported main!")
-            except Exception as e:
-                print(f"Error importing main: {e}")
-        `);
 
-        // Generate audio (MIDI file)
-        const result = await pyodide.runPythonAsync(`
-            print("Loading packages")
-            from js import console
-            from pyodide.ffi import to_js
-            from my_midiutil import MIDIFile
-            print("imported midifile")
-            import main
-            print("imported main")
+        console.log("Testing Python imports...");
+        await testPythonImports();
 
-            print("Imported packages")
+        console.log("Generating MIDI...");
+        const midiData = await generateMidi(startDate, endDate, bpm);
 
-            # Generate MIDI, video, and sync
-            midi_file, video1, video2 = main.generate_media("${startDate}", "${endDate}", int(${bpm}))
-
-            # Return as base64-encoded blobs
-            def get_base64(file_path):
-                with open(file_path, "rb") as file:
-                    return file.read().hex()
-
-            midi_blob = get_base64(midi_file)
-            video1_blob = get_base64(video1)
-            video2_blob = get_base64(video2)
-
-            console.log(to_js({"midi": midi_blob, "video1": video1_blob, "video2": video2_blob}))
-        `);
-
-        // Create a downloadable MIDI file
-        const audioBlob = new Blob([result], { type: "audio/midi" });
+        console.log("Creating MIDI download...");
+        const audioBlob = new Blob([midiData], { type: "audio/midi" });
         const audioUrl = URL.createObjectURL(audioBlob);
+
         const audioPlayer = document.getElementById("audio-player");
         audioPlayer.src = audioUrl;
 
-        // Generate videos
+        console.log("Generating videos...");
         await generateVideos();
 
         alert("Audio and videos generated successfully!");
@@ -202,4 +206,9 @@ document.getElementById("start-button").addEventListener("click", async () => {
         console.error("Error:", error);
         alert("An error occurred while generating content.");
     }
+});
+
+// Initialize Pyodide when the page loads
+window.addEventListener("load", () => {
+    loadPyodideAndPackages();
 });
