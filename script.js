@@ -68,6 +68,9 @@ async function loadPyodideAndPackages() {
         `);
         console.log("matplotlib installed successfully.");
 
+        await pyodide.loadPackage("pandas");
+        await pyodide.loadPackage("matplotlib");
+
         pyodideReady = true; // Mark as ready
         console.log("Pyodide and packages are ready.");
     } catch (error) {
