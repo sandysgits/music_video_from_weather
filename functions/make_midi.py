@@ -1,5 +1,5 @@
 import pandas as pd
-from audiolazy import str2midi
+# from audiolazy import str2midi
 from my_midiutil import MIDIFile
 from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
 

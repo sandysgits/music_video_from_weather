@@ -1,8 +1,7 @@
 import json
-from flask import Flask, request, jsonify
-from midiutil import MIDIFile  # Example library for MIDI
-from audiolazy import str2midi
-from midiutil import MIDIFile
+# from flask import Flask, request, jsonify
+from my_midiutil import MIDIFile  # Example library for MIDI
+# from audiolazy import str2midi
 from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
 from functions.make_midi import produce_midi_file
 from functions.download import download_files, load_and_combine_data, data_main
