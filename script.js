@@ -113,6 +113,7 @@ async function generateMidi(startDate, endDate, bpm) {
     try {
         console.log("Generating MIDI file...");
         const midiPath = await pyodide.runPythonAsync(`
+            print("loading packages")
             from main import generate_media
             from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
             from functions.make_midi import produce_midi_file
@@ -235,7 +236,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         audioPlayer.src = audioUrl;
 
         console.log("Generating videos...");
-        await generateVideos();
+        // await generateVideos();
 
         alert("Audio and videos generated successfully!");
     } catch (error) {
