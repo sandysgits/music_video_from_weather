@@ -117,6 +117,7 @@ async function generateMidi(startDate, endDate, bpm) {
             from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
             from functions.make_midi import produce_midi_file
             from functions.download import download_files, load_and_combine_data, data_main
+            print("packages imported")
             midi_file, _, _ = generate_media("${startDate}", "${endDate}", int(${bpm}))
             midi_file
         `);
