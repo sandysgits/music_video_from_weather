@@ -109,27 +109,23 @@ async function testPythonImports() {
 }
 
 // Load .txt file with weatherdata
-async function loadTxtFromGitHub(pyodide) {
+async function loadTxt(pyodide) {
     try {
-        // URL der Datei im GitHub-Repository
-        const url = "https://github.com/sandysgits/website/blob/main/weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt";
+        // Create the `weatherdata` folder in Pyodide's filesystem
+        pyodide.FS.mkdir("weatherdata");
 
-        // Datei von GitHub laden
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Fehler beim Laden der Datei: ${response.statusText}`);
+        // List of files in the `weatherdata` folder
+        const functionFiles = [
+            "weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt"
+        ];
+
+        // Load each file into the Pyodide filesystem
+        for (const file of functionFiles) {
+            await loadPythonFile(file, file);
         }
-
-        // Dateiinhalt lesen
-        const fileContent = await response.text();
-
-        // Datei in Pyodide's virtuelles Dateisystem schreiben
-        pyodide.FS.writeFile("weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", fileContent);
-
-        console.log("Datei erfolgreich geladen und im Pyodide-FS gespeichert.");
-        //console.log("Inhalt der Datei:", fileContent);
+        console.log("All data loaded successfully.");
     } catch (error) {
-        console.error("Fehler beim Laden der Datei:", error);
+        console.error("Error loading weatherdata folder:", error);
     }
 }
 
@@ -247,7 +243,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await loadMidiUtil(pyodide);
         await loadFunctionsFolder(pyodide); // Load the functions folder
         await loadMain(pyodide);
-        await loadTxtFromGitHub(pyodide);
+        await loadTxt(pyodide);
         console.log("Loading data in pyodide");
         //await pyodide.runPythonAsync(`
         //    # Datei im virtuellen Dateisystem öffnen und lesen
