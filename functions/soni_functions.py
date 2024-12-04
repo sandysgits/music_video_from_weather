@@ -193,7 +193,7 @@ def get_midi_instrument_number(instrument_name):
         print(f"Error: '{instrument_name}' is not a valid instrument name.")
         sys.exit(1)
 
-def str2midi():
+def str2midi(note):
     """
     Returns a note-to-MIDI mapping for notes from C0 to C8.
 

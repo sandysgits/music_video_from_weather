@@ -19,18 +19,19 @@ def generate_media(start_date, end_date, bpm):
     # Lade die Datei
     file_path = f"./weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt"
     files_downloaded = [file_path]
-    #start_date = datetime.strptime(start_time, '%Y%m%d%H%M')
-    #end_date = datetime.strptime(end_time, '%Y%m%d%H%M')
+    start_time = datetime.strptime(start_date, '%Y-%m-%d')
+    end_time = datetime.strptime(end_date, '%Y-%m-%d')
     print("Loading data...")
     #data = load_and_combine_data(files_downloaded, start_date, end_date)
     data = pd.read_csv(file_path, sep=';', skipinitialspace=True)
     data = data.iloc[::30]  # Wählt jede 30. Zeile aus (alle 5 min)
     print("Data loaded.")
     
-    
-    #instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
+    vel_min = 30
+    vel_max = 70
+    instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
     # Erstelle Midi file aus den Daten:
-    midi = produce_midi_file(data, bpm, start_time)
+    midi = produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments)
     
     with open(f"./assets/audio/{audio_file}", "wb") as output_file:
         midi.writeFile(output_file)
@@ -53,4 +54,4 @@ if __name__ == '__main__':
     os.makedirs("./assets/video", exist_ok=True)
     app.run(debug=True)
 
-generate_media("")
+generate_media("2024-12-01", "2024-12-04", 90)

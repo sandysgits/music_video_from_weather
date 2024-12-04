@@ -51,6 +51,7 @@ def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
         season = get_season(date)
         scale = get_scale(season)
         note_names = get_notes(scale)
+        print(note_names)
         # ODER über vorgegebene Noten
         #note_names = ['C1','C2','G2',
         #             'C3','E3','G3','A3','B3',
