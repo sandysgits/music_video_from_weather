@@ -7,7 +7,7 @@ from functions.make_midi import produce_midi_file
 from functions.download import download_files, load_and_combine_data, data_main
 # import requests
 # import zipfile
-# import io
+import io
 # import os
 import pandas as pd
 from datetime import datetime
