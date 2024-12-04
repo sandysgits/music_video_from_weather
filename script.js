@@ -154,7 +154,8 @@ async function generateMedia(startDate, endDate, bpm) {
         // Fetch and log the audio file
         const audioData = pyodide.FS.readFile(audioFile);
         console.log("Audio file content:", audioData);
-
+        
+        // ABFUCK
         // Fetch and log the video placeholders
         const video1Data = pyodide.FS.readFile(video1);
         const video2Data = pyodide.FS.readFile(video2);
