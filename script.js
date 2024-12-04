@@ -65,13 +65,11 @@ async function loadPyodideAndPackages() {
             import micropip
             await micropip.install('matplotlib')
             await micropip.install('pandas')
-            await micropip.install('io')
         `);
         console.log("matplotlib installed successfully.");
 
         await pyodide.loadPackage("pandas");
         await pyodide.loadPackage("matplotlib");
-        await pyodide.loadPackage("io");
 
         pyodideReady = true; // Mark as ready
         console.log("Pyodide and packages are ready.");
@@ -138,6 +136,7 @@ async function generateMidi(startDate, endDate, bpm) {
         const midiPath = await pyodide.runPythonAsync(`
             try: 
                 from main import generate_media
+                import io
                 print("${startDate}")
                 print("${endDate}")
                 midi_file, _, _ = generate_media("${startDate}", "${endDate}", int(${bpm}))
