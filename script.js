@@ -65,6 +65,7 @@ async function loadPyodideAndPackages() {
             import micropip
             await micropip.install('matplotlib')
             await micropip.install('pandas')
+            import io
         `);
         console.log("matplotlib installed successfully.");
 
