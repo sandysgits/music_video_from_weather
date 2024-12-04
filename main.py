@@ -33,11 +33,13 @@ def generate_media(start_date, end_date, bpm):
     instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
     # Erstelle Midi file aus den Daten:
     midi = produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments)
+    print("Midi produced.")
     
     #with open(f"./assets/audio/{audio_file}", "wb") as output_file:
     #    midi.writeFile(output_file)
 
     # Create an in-memory buffer
+    print("Write midi to {audio_file}")
     midi_buffer = io.BytesIO()
     
     # Write the MIDI data to the buffer
