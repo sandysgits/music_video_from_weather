@@ -108,6 +108,31 @@ async function testPythonImports() {
     }
 }
 
+// Load .txt file with weatherdata
+async function loadTxtFromGitHub() {
+    try {
+        // URL der Datei im GitHub-Repository
+        const url = "https://github.com/sandysgits/website/blob/main/weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt";
+
+        // Datei von GitHub laden
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Fehler beim Laden der Datei: ${response.statusText}`);
+        }
+
+        // Dateiinhalt lesen
+        const fileContent = await response.text();
+
+        // Datei in Pyodide's virtuelles Dateisystem schreiben
+        pyodide.FS.writeFile("/weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", fileContent);
+
+        console.log("Datei erfolgreich geladen und im Pyodide-FS gespeichert.");
+        console.log("Inhalt der Datei:", fileContent);
+    } catch (error) {
+        console.error("Fehler beim Laden der Datei:", error);
+    }
+}
+
 // Generate MIDI file using main.py
 async function generateMidi(startDate, endDate, bpm) {
     try {
@@ -222,6 +247,12 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await loadMidiUtil(pyodide);
         await loadFunctionsFolder(pyodide); // Load the functions folder
         await loadMain(pyodide);
+        await pyodide.runPythonAsync(`
+            # Datei im virtuellen Dateisystem öffnen und lesen
+            with open("/weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", "r") as file:
+                content = file.read()
+                print("Inhalt der Datei:", content)
+        `);
 
         console.log("Testing Python imports...");
         await testPythonImports();
