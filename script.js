@@ -109,7 +109,7 @@ async function testPythonImports() {
 }
 
 // Load .txt file with weatherdata
-async function loadTxtFromGitHub() {
+async function loadTxtFromGitHub(pyodide) {
     try {
         // URL der Datei im GitHub-Repository
         const url = "https://github.com/sandysgits/website/blob/main/weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt";
@@ -127,7 +127,7 @@ async function loadTxtFromGitHub() {
         pyodide.FS.writeFile("weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", fileContent);
 
         console.log("Datei erfolgreich geladen und im Pyodide-FS gespeichert.");
-        console.log("Inhalt der Datei:", fileContent);
+        //console.log("Inhalt der Datei:", fileContent);
     } catch (error) {
         console.error("Fehler beim Laden der Datei:", error);
     }
@@ -247,7 +247,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await loadMidiUtil(pyodide);
         await loadFunctionsFolder(pyodide); // Load the functions folder
         await loadMain(pyodide);
-        await loadTxtFromGitHub();
+        await loadTxtFromGitHub(pyodide);
         console.log("Loading data in pyodide");
         //await pyodide.runPythonAsync(`
         //    # Datei im virtuellen Dateisystem öffnen und lesen
