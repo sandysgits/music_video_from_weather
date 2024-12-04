@@ -53,8 +53,8 @@ def generate_media(start_date, end_date, bpm):
 
     return json.dumps({
         "audioFile": midi_data,
-        "video1": video1_data",
-        "video2": video2_data",
+        "video1": video1_data,
+        "video2": video2_data,
     })
 
 if __name__ == '__main__':
