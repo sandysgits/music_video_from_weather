@@ -247,6 +247,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await loadMidiUtil(pyodide);
         await loadFunctionsFolder(pyodide); // Load the functions folder
         await loadMain(pyodide);
+        await loadTxtFromGitHub();
         console.log("Loading data in pyodide");
         await pyodide.runPythonAsync(`
             # Datei im virtuellen Dateisystem öffnen und lesen
