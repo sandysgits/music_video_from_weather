@@ -130,7 +130,7 @@ async function loadTxt(pyodide) {
 }
 
 // Generate MIDI file using main.py
-async function generateMidi(startDate, endDate, bpm) {
+async function generateMedia(startDate, endDate, bpm) {
     try {
         console.log("Generating MIDI file...");
         const midiPath = await pyodide.runPythonAsync(`
