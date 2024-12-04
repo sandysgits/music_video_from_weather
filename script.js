@@ -247,6 +247,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await loadMidiUtil(pyodide);
         await loadFunctionsFolder(pyodide); // Load the functions folder
         await loadMain(pyodide);
+        console.log("Loading data in pyodide");
         await pyodide.runPythonAsync(`
             # Datei im virtuellen Dateisystem öffnen und lesen
             with open("./weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", "r") as file:
