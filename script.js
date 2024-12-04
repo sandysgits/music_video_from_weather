@@ -124,7 +124,7 @@ async function loadTxtFromGitHub() {
         const fileContent = await response.text();
 
         // Datei in Pyodide's virtuelles Dateisystem schreiben
-        pyodide.FS.writeFile("/weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", fileContent);
+        pyodide.FS.writeFile("weatherdata/OF_wetterpark_zehn_min_tu_20200101_20211231_07341.txt", fileContent);
 
         console.log("Datei erfolgreich geladen und im Pyodide-FS gespeichert.");
         console.log("Inhalt der Datei:", fileContent);
