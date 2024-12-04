@@ -33,8 +33,23 @@ def generate_media(start_date, end_date, bpm):
     # Erstelle Midi file aus den Daten:
     midi = produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments)
     
-    with open(f"./assets/audio/{audio_file}", "wb") as output_file:
-        midi.writeFile(output_file)
+    #with open(f"./assets/audio/{audio_file}", "wb") as output_file:
+    #    midi.writeFile(output_file)
+
+    # Create an in-memory buffer
+    midi_buffer = io.BytesIO()
+    
+    # Write the MIDI data to the buffer
+    midi.writeFile(midi_buffer)
+
+    # Get the binary data from the buffer
+    midi_data = midi_buffer.getvalue()
+
+    # Write the binary data to Pyodide's virtual filesystem
+    pyodide_file_path = f"/assets/audio/{audio_file}"
+    pyodide.FS.mkdirTree("/assets/audio")  # Ensure the directory exists
+    pyodide.FS.writeFile(pyodide_file_path, midi_data)
+    print(f"MIDI file saved to virtual filesystem at {pyodide_file_path}")
 
     # Create videos (placeholders for now)
     video1 = f"video1_{start_date}_{end_date}_{bpm}.mp4"
