@@ -54,4 +54,4 @@ if __name__ == '__main__':
     os.makedirs("./assets/video", exist_ok=True)
     app.run(debug=True)
 
-generate_media("2024-12-01", "2024-12-04", 90)
+# generate_media("2024-12-01", "2024-12-04", 90)
