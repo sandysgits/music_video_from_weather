@@ -269,7 +269,7 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await testPythonImports();
 
         console.log("Generating MIDI...");
-        const { audioFile, video1, video2 } = await generateMedia(startDate, endDate, bpm);
+        const { audioFile, video1, video2 } = await generateMidi(startDate, endDate, bpm);
 
         console.log("Fetching MIDI data...");
         const midiData = pyodide.FS.readFile(audioFile);
