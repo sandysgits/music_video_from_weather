@@ -137,21 +137,33 @@ async function generateMidi(startDate, endDate, bpm) {
             try: 
                 from main import generate_media
                 import io
+                import json
                 print("${startDate}")
                 print("${endDate}")
-                midi_file, _, _ = generate_media("${startDate}", "${endDate}", int(${bpm}))
-                midi_file
+                generate_media("${startDate}", "${endDate}", int(${bpm}))
             except Exception as e:
                 print(f"Error occurred: {e}")
                 raise
         `);
         console.log("MIDI generated at:", midiPath);
 
-        // Read the MIDI file from the virtual filesystem
-        const midiData = pyodide.FS.readFile(midiPath);
-        return midiData;
+        // Parse the JSON result
+        const { audioFile, video1, video2 } = JSON.parse(midiPath);
+        console.log("Media generated:", { audioFile, video1, video2 });
+
+        // Fetch and log the audio file
+        const audioData = pyodide.FS.readFile(audioFile);
+        console.log("Audio file content:", audioData);
+
+        // Fetch and log the video placeholders
+        const video1Data = pyodide.FS.readFile(video1);
+        const video2Data = pyodide.FS.readFile(video2);
+        console.log("Video 1 content:", video1Data);
+        console.log("Video 2 content:", video2Data);
+
+        return { audioFile, video1, video2 };
     } catch (error) {
-        console.error("Error generating MIDI file:", error);
+        console.error("Error generating media:", error);
         throw error;
     }
 }
@@ -257,7 +269,10 @@ document.getElementById("start-button").addEventListener("click", async () => {
         await testPythonImports();
 
         console.log("Generating MIDI...");
-        const midiData = await generateMidi(startDate, endDate, bpm);
+        const { audioFile, video1, video2 } = await generateMedia(startDate, endDate, bpm);
+
+        console.log("Fetching MIDI data...");
+        const midiData = pyodide.FS.readFile(audioFile);
 
         console.log("Creating MIDI download...");
         const audioBlob = new Blob([midiData], { type: "audio/midi" });
@@ -266,8 +281,13 @@ document.getElementById("start-button").addEventListener("click", async () => {
         const audioPlayer = document.getElementById("audio-player");
         audioPlayer.src = audioUrl;
 
-        console.log("Generating videos...");
-        // await generateVideos();
+        console.log("Fetching video placeholders...");
+        const video1Data = pyodide.FS.readFile(video1);
+        const video2Data = pyodide.FS.readFile(video2);
+
+        console.log("Video placeholders fetched:");
+        console.log("Video 1 data length:", video1Data.length);
+        console.log("Video 2 data length:", video2Data.length);
 
         alert("Audio and videos generated successfully!");
     } catch (error) {

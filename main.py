@@ -8,6 +8,7 @@ from functions.download import download_files, load_and_combine_data, data_main
 # import requests
 # import zipfile
 import io
+import json
 # import os
 import pandas as pd
 from datetime import datetime
@@ -51,17 +52,18 @@ def generate_media(start_date, end_date, bpm):
     pyodide.FS.writeFile(pyodide_file_path, midi_data)
     print(f"MIDI file saved to virtual filesystem at {pyodide_file_path}")
 
-    # Create videos (placeholders for now)
+    # Save placeholder video files to Pyodide's virtual filesystem
     video1 = f"video1_{start_date}_{end_date}_{bpm}.mp4"
     video2 = f"video2_{start_date}_{end_date}_{bpm}.mp4"
-    with open(f"./assets/video/{video1}", "wb") as vid1, open(f"./assets/video/{video2}", "wb") as vid2:
-        vid1.write(b"")  # Placeholder for video content
-        vid2.write(b"")
+    pyodide.FS.mkdirTree("/assets/video")
+    pyodide.FS.writeFile(f"/assets/video/{video1}", b"")  # Placeholder content
+    pyodide.FS.writeFile(f"/assets/video/{video2}", b"")  # Placeholder content
+    print(f"Video placeholders saved to virtual filesystem.")
 
-    return jsonify({
-        "audioFile": audio_file,
-        "video1": video1,
-        "video2": video2
+    return json.dumps({
+        "audioFile": f"/assets/audio/{audio_file}",
+        "video1": f"/assets/video/{video1}",
+        "video2": f"/assets/video/{video2}",
     })
 
 if __name__ == '__main__':
