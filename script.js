@@ -71,6 +71,7 @@ async function loadPyodideAndPackages() {
 
         await pyodide.loadPackage("pandas");
         await pyodide.loadPackage("matplotlib");
+        await pyodide.loadPackage("io");
 
         pyodideReady = true; // Mark as ready
         console.log("Pyodide and packages are ready.");
