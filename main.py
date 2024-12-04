@@ -48,24 +48,13 @@ def generate_media(start_date, end_date, bpm):
     # Get the binary data from the buffer
     midi_data = midi_buffer.getvalue()
 
-    # Write the binary data to Pyodide's virtual filesystem
-    pyodide_file_path = f"/assets/audio/{audio_file}"
-    pyodide.FS.mkdirTree("/assets/audio")  # Ensure the directory exists
-    pyodide.FS.writeFile(pyodide_file_path, midi_data)
-    print(f"MIDI file saved to virtual filesystem at {pyodide_file_path}")
-
-    # Save placeholder video files to Pyodide's virtual filesystem
-    video1 = f"video1_{start_date}_{end_date}_{bpm}.mp4"
-    video2 = f"video2_{start_date}_{end_date}_{bpm}.mp4"
-    pyodide.FS.mkdirTree("/assets/video")
-    pyodide.FS.writeFile(f"/assets/video/{video1}", b"")  # Placeholder content
-    pyodide.FS.writeFile(f"/assets/video/{video2}", b"")  # Placeholder content
-    print(f"Video placeholders saved to virtual filesystem.")
+    video1_data = b""
+    video2_data = b""
 
     return json.dumps({
-        "audioFile": f"/assets/audio/{audio_file}",
-        "video1": f"/assets/video/{video1}",
-        "video2": f"/assets/video/{video2}",
+        "audioFile": midi_data,
+        "video1": video1_data",
+        "video2": video2_data",
     })
 
 if __name__ == '__main__':

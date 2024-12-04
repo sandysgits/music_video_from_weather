@@ -133,7 +133,7 @@ async function loadTxt(pyodide) {
 async function generateMedia(startDate, endDate, bpm) {
     try {
         console.log("Generating MIDI file...");
-        const midiPath = await pyodide.runPythonAsync(`
+        const result = await pyodide.runPythonAsync(`
             try: 
                 from main import generate_media
                 import io
@@ -147,22 +147,24 @@ async function generateMedia(startDate, endDate, bpm) {
         `);
         console.log("MIDI generated at:", midiPath);
 
-        // Parse the JSON result
-        const { audioFile, video1, video2 } = JSON.parse(midiPath);
-        console.log("Media generated:", { audioFile, video1, video2 });
+        // Parse the Python result (midi_data and video data)
+        const { midi_data, video1_data, video2_data } = JSON.parse(result);
 
-        // Fetch and log the audio file
-        const audioData = pyodide.FS.readFile(audioFile);
-        console.log("Audio file content:", audioData);
-        
-        // ABFUCK
-        // Fetch and log the video placeholders
-        const video1Data = pyodide.FS.readFile(video1);
-        const video2Data = pyodide.FS.readFile(video2);
-        console.log("Video 1 content:", video1Data);
-        console.log("Video 2 content:", video2Data);
+        // Save the MIDI file
+        const midiPath = "/assets/audio/output.midi";
+        pyodide.FS.mkdirTree("/assets/audio");
+        pyodide.FS.writeFile(midiPath, midi_data);
+        console.log(`MIDI file saved to ${midiPath}`);
 
-        return { audioFile, video1, video2 };
+        // Save placeholder video files
+        const video1Path = "/assets/video/video1.mp4";
+        const video2Path = "/assets/video/video2.mp4";
+        pyodide.FS.mkdirTree("/assets/video");
+        pyodide.FS.writeFile(video1Path, video1_data);
+        pyodide.FS.writeFile(video2Path, video2_data);
+        console.log("Video placeholders saved.");
+
+        return { midiPath, video1Path, video2Path };
     } catch (error) {
         console.error("Error generating media:", error);
         throw error;
