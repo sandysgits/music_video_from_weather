@@ -114,9 +114,9 @@ async function generateMidi(startDate, endDate, bpm) {
         console.log("Generating MIDI file...");
         const midiPath = await pyodide.runPythonAsync(`
             try: 
-                print("loading packages")
                 from main import generate_media
-                print("packages imported")
+                print("${startDate}")
+                print("${endDate}")
                 midi_file, _, _ = generate_media("${startDate}", "${endDate}", int(${bpm}))
                 midi_file
             except Exception as e:
