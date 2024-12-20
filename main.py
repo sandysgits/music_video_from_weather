@@ -28,9 +28,12 @@ def generate_media(start_date, end_date, bpm):
     data = data.iloc[::30]  # Wählt jede 30. Zeile aus (alle 5 min)
     print("Data loaded.")
     
-    vel_min = 30
-    vel_max = 70
+    vel_min = 30 # minimal Volume
+    vel_max = 70 # max. volume
+
+    # Choose your instruments:
     instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
+
     # Erstelle Midi file aus den Daten:
     midi = produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments)
     print("Midi produced.")
@@ -47,6 +50,9 @@ def generate_media(start_date, end_date, bpm):
 
     # Get the binary data from the buffer
     midi_data = midi_buffer.getvalue()
+
+    # Generate Videos:
+    # ...... (data, start_time, end_time, bpm)
 
     video1_data = b""
     video2_data = b""
