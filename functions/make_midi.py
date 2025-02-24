@@ -1,6 +1,6 @@
 import pandas as pd
 # from audiolazy import str2midi
-from my_midiutil import MIDIFile
+from functions.my_midiutil import MIDIFile
 from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number, str2midi
 
 def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
