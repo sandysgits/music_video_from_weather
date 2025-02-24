@@ -1,10 +1,7 @@
-
-
-todo:
-create .yaml file for all virtual environment
-create README
-
 # Weather Webcam Sonification
+
+## Motivation
+Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization and sound—we can create a **richer, more immersive experience**. This project explores how **sonification and animation** can bring weather data to life, making it more **intuitive, engaging, and accessible**. By linking weather conditions to both visual and auditory cues, we enhance our ability to recognize patterns and better understand meteorological phenomena.
 
 ## Overview
 This project downloads **weather station data** and **webcam images** from the **Deutscher Wetterdienst (DWD)** for the same time period. We then **visualize** the data and **sonify** it, merging both into a compelling multimedia experience.
@@ -17,14 +14,21 @@ This project downloads **weather station data** and **webcam images** from the *
 ✅ **Combine the animation with the sonified data** into an MP4 file.  
 
 ## Example Dataset
-A small dataset is included in the repository as an example. You can find it in:
-```
-/data/sample_weather_data.txt
-```
+A small **example dataset** is included in the repository, containing:
+- A `.txt` file with **exemplary weather data**.
+- The **corresponding webcam images** from the same time period.
+
+📄 **Path:** `/data/sample_weather_data.txt` and associated images in `/data/webcam_images/`
+
 This dataset allows you to test the visualization and sonification features without downloading new data.
 
 ## Installation
-To run this project, install the necessary dependencies using Conda:
+To set up the environment automatically, use the provided YAML file:
+```sh
+conda env create -f environment/environment.yaml
+conda activate weather_sonifi
+```
+Alternatively, install dependencies manually with Conda:
 ```sh
 conda create -n weather_sonifi python=3.9
 conda activate weather_sonifi
@@ -36,19 +40,20 @@ pip install matplotlib pandas pillow fluidsynth midi2audio pretty_midi
 ```
 
 ## Usage
-### **1️⃣ Download and Process Data**
-Run the following command to fetch weather and webcam data for a given time range:
+### **Option 1: Download Station and Webcam Data Live from DWD and Create Video**
+Fetch the latest weather and webcam data from DWD and generate the animated visualization:
 ```sh
 python main.py --start "2025-02-19 00:00" --end "2025-02-20 00:00"
 ```
 
-### **2️⃣ Generate Animation and MIDI Sonification**
-This will automatically:
-- Fetch and preprocess data
-- Generate an animated visualization
-- Create a sonified MIDI file
+### **Option 2: Use Example Data**
+If you want to generate the visualization using the included example dataset:
+```sh
+python main.py --use-example-data
+```
+This will process the pre-downloaded weather data and corresponding webcam images.
 
-### **3️⃣ Convert MIDI to Audio and Merge with Animation**
+### **Generating the Final Video with Audio**
 To convert the MIDI file to a `.wav` file and merge it with the animation:
 ```sh
 python merge_audio_video.py
@@ -58,8 +63,14 @@ This outputs `final_weather_video.mp4` with synchronized sonification.
 ## Example Output
 ![Example Animation](assets/example_animation.gif)
 
+## Environment File
+The `environment.yaml` file is stored in the `environment/` directory and can be used to set up the project easily. 
+
+📄 **Path:** `environment/environment.yaml`
+
 ## Contribution
-Feel free to fork, improve, or extend this project! Open a pull request if you have improvements or new features.
+Feel free to fork, improve, or extend this project. Open a pull request if you have improvements or new features.
+
 
 ## License
 ???
