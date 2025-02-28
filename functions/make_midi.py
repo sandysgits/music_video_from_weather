@@ -76,12 +76,12 @@ def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
 
         # Konvertiere Temperatur in eine MIDI-Note
         y_data = map_value(temp, -20, 50, 0, 1)
-        note_index = round(map_value(y_data, 0, 1, 0, n_notes-1)) #bigger craters are mapped to lower notes
+        note_index = round(map_value(y_data, 0, 1, 0, n_notes-1)) 
         midi_data = note_midis[note_index]
 
         # Konvertiere Wind in Lautstärke
         w_data = map_value(wind_speed, 0, 100, 0, 1)
-        note_velocity = round(map_value(w_data, 0, 1, vel_min, vel_max)) #bigger craters will be louder
+        note_velocity = round(map_value(w_data, 0, 1, vel_min, vel_max)) 
         volume = note_velocity
 
         # Bestimme die Notenlänge

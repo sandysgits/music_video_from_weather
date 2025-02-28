@@ -24,6 +24,8 @@ def generate_weather_animation(df, base_path, frames=5, interval=500):
             if len(parts) == 3:
                 date_time = parts[1] + " " + parts[2].replace(".jpg", "")
                 existing_images.append(date_time)
+    
+    
 
     # Convert to DataFrame
     image_df = pd.DataFrame(existing_images, columns=['DateTime'])

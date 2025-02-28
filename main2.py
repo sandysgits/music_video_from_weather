@@ -1,4 +1,4 @@
-""" import os
+import os
 from pathlib import Path
 from functions.video_funcs import generate_weather_animation, read_station_data
 
@@ -7,18 +7,19 @@ base_dir = Path(__file__).parent
 print(base_dir)
 
 # Construct the file path relative to main.py
-file_path = base_dir / "weatherdata" / "produkt_zehn_now_tu_20250219_20250219_07431.txt"
+#file_path = base_dir / "weatherdata" / "produkt_zehn_now_tu_20250219_20250219_07431.txt"
+file_path = base_dir / "weatherdata" / "produkt_zehn_min_tu_20230828_20250227_07431.txt"
 webcam_path = base_dir / "weatherdata/webcam_data/" 
 
 # Read the data using the fixed path
 df = read_station_data(str(file_path))
 print('data was read')
-generate_weather_animation(df, webcam_path, frames = 20)
-print('video was created') """
+generate_weather_animation(df, webcam_path, frames = 88)
+print('video was created')
 
 
 ###############################
-
+""" 
 
 from functions.my_midiutil import MIDIFile  # Example library for MIDI
 from functions.soni_functions import get_season, get_scale, map_value, get_notes, get_midi_instrument_number
@@ -66,3 +67,5 @@ midi.writeFile(midi_buffer)
 
 # Get the binary data from the buffer
 midi_data = midi_buffer.getvalue()
+
+# read the midi data """
