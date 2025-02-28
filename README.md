@@ -1,7 +1,12 @@
 # Weather Webcam Sonification
 
 ## Motivation
-Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization and sound—we can create a **richer, more immersive experience**. This project explores how **sonification and animation** can bring weather data to life, making it more **intuitive, engaging, and accessible**. By linking weather conditions to both visual and auditory cues, we enhance our ability to recognize patterns and better understand meteorological phenomena.
+Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization, real-world webcam imagery, and sound—we can create a richer, more immersive experience. This project explores how sonification and animation can bring weather data to life, making it more intuitive, engaging, and accessible.
+
+Webcam data provides a direct visual representation of actual weather conditions, offering a perspective that goes beyond abstract graphs and numbers. By integrating live weather footage with data visualizations, we create a more comprehensive and realistic depiction of weather changes. Seeing the sky darken, clouds gather, or rain begin to fall adds context that a simple line graph cannot provide.
+
+Adding sound as another sensory layer enhances this experience even further. Through sonification, we can represent various meteorological changes dynamically, allowing us to hear the weather evolve over time. For example, a pressure drop could be mapped to a descending pitch to indicate worsening conditions, while temperature changes might be reflected in tonal shifts. These are just examples of how sonification can translate numerical weather patterns into an auditory experience, offering new ways to interpret and understand complex data.
+
 
 ## Overview
 This project downloads **weather station data** and **webcam images** from the **Deutscher Wetterdienst (DWD)** for the same time period. We then **visualize** the data and **sonify** it, merging both into a compelling multimedia experience.
@@ -11,6 +16,7 @@ This project downloads **weather station data** and **webcam images** from the *
 ✅ **Fetch webcam images** from DWD for the same time period.  
 ✅ **Visualize both datasets** in an animated plot.  
 ✅ **Sonify the weather data** and convert it into a MIDI file.  
+transform the midi into a wav file.
 ✅ **Combine the animation with the sonified data** into an MP4 file.  
 
 ## Example Dataset
