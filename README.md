@@ -66,6 +66,8 @@ python merge_audio_video.py
 ```
 This outputs `final_weather_video.mp4` with synchronized sonification.
 
+https://signal.vercel.app/ - you can have a look at the created midi file here for example. also other applications
+
 ## Example Output
 ![Example Animation](assets/example_animation.gif)
 
