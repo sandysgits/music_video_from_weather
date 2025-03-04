@@ -89,10 +89,13 @@ def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
         duration = duration_beats *60 / bpm #max(0.1, 2 - (abs(wind_speed) / 10))
 
         # Ändere Notenlänge der Melodie bei Hoch-/Tiefdruck
+        #print(current_pressure_category)
         if (current_pressure_category == 'high'):
             duration_melody = 0.1 * duration
+            
         else:
             duration_melody = 1.1* duration
+        
 
         # Füge die Note zur MIDI-Datei hinzu
         midi.addNote(0, 0, midi_data, start_time, duration_melody, volume)
@@ -121,6 +124,8 @@ def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
         midi.addNote(3, 3, midi_data - 32, start_time, 0.3*duration, volume_bass)
 
         # Erhöhe die Startzeit für die nächste Note
+        # ! this is the important part! here has to be duration_beats =1 and not duration = x
         start_time += duration
+        print(start_time)
         
     return midi

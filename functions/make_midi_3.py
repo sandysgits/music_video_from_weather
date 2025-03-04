@@ -51,16 +51,31 @@ def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
         duration = 1
         total_duration += duration  # Accumulate total duration
 
-        midi.addNote(0, 0, midi_data, start_time, duration, volume)
+        # Ändere Notenlänge der Melodie bei Hoch-/Tiefdruck
+        if (current_pressure_category == 'high'):
+            duration_melody = 0.1 * duration
+        else:
+            duration_melody = 1.1* duration
+
+        # This defines the length of the whole audio. Somehow the length is the same when duration_melody is 0.1 or 1.0
+        # Füge die Note zur MIDI-Datei hinzu
+        midi.addNote(0, 0, midi_data, start_time, duration_melody, volume)
+
+
+   #     midi.addNote(0, 0, midi_data, start_time, duration, volume)
+        
+        
         harmony_note = midi_data - 8
 
+        press_factor = 1.0
+
         if current_pressure_category == 'high':
-            midi.addNote(1, 1, midi_data - 8, start_time, duration, volume - 10)
-            midi.addNote(1, 1, midi_data - 8, start_time + duration, duration, volume - 10)
+            midi.addNote(1, 1, midi_data - 8, start_time, press_factor*duration, volume - 10)
+            midi.addNote(1, 1, midi_data - 8, start_time + press_factor*duration, press_factor*duration, volume - 10)
         else:
             midi.addNote(1, 1, midi_data - 8, start_time, duration, volume - 10)
 
-        midi.addNote(2, 2, harmony_note, start_time, duration, volume - 10)
+        midi.addNote(2, 2, harmony_note, start_time, 1.1*duration, volume - 10)
 
         if pressure < 950:
             volume_bass = min(volume + 20, vel_max)

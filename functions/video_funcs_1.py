@@ -42,7 +42,7 @@ def load_weather_and_image_data(base_path, df, start_datetime, end_datetime, fra
     return image_df, full_weather_data
 
 
-def generate_weather_animation(image_df, full_weather_data, base_path, output_file_name,frames=5):
+def generate_weather_animation(image_df, full_weather_data, base_path, output_file_name,frames,fps):
     
     # Increase animation embedding limit
     plt.rcParams['animation.embed_limit'] = 100
@@ -134,7 +134,7 @@ def generate_weather_animation(image_df, full_weather_data, base_path, output_fi
     # Create the animation
     interval = 500
     ani = animation.FuncAnimation(fig, update_plot, frames=frames, interval=interval, blit=False)
-    ani.save(output_file_name, writer="ffmpeg", fps=3)
+    ani.save(output_file_name, writer="ffmpeg", fps=fps)
     display(HTML(ani.to_jshtml()))
 
 

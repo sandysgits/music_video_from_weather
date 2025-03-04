@@ -1,5 +1,9 @@
 # Weather Webcam Sonification
 
+TODO:
+How to use map_value? if global min max, then gets problematic -> should also include a if season ... ?
+- parameter which variables you want to plot and generate a sound to
+
 ## Motivation
 Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization and sound—we can create a **richer, more immersive experience**. This project explores how **sonification and animation** can bring weather data to life, making it more **intuitive, engaging, and accessible**. By linking weather conditions to both visual and auditory cues, we enhance our ability to recognize patterns and better understand meteorological phenomena.
 
