@@ -4,6 +4,7 @@ from scipy.io.wavfile import write
 from pathlib import Path
 
 def midi_to_wav(midi_file, output_wav, sample_rate=44100):
+    
     """Convert MIDI to WAV using synthesized sine waves."""
     midi_data = pretty_midi.PrettyMIDI(midi_file)
     print('midi data read')

@@ -34,6 +34,7 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         current_pressure_category = 'high' if pressure > 1013.25 else 'low'
         duration_melody = 0.5 if current_pressure_category == 'high' else 1.1
         
+        #print(f"midi_data {midi_data}")
         midi.addNote(0, 0, midi_data, start_time, duration_melody, volume)
         midi.addNote(1, 1, midi_data - 8, start_time, 0.5 * duration_melody, volume + 10)
         midi.addNote(1, 1, midi_data - 8, start_time + 0.5 * duration_melody, 0.5 * duration_melody, volume + 10)

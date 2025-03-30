@@ -5,6 +5,7 @@ import matplotlib.dates as mdates
 from PIL import Image
 import pandas as pd
 from IPython.display import display, HTML
+from matplotlib.animation import FFMpegWriter
 
 def load_weather_and_image_data(base_path, df, start_datetime, end_datetime, frames=5):
     """Finds and loads weather and image data for a given timeframe."""
@@ -39,10 +40,14 @@ def load_weather_and_image_data(base_path, df, start_datetime, end_datetime, fra
     else:
         print(f"Successfully loaded {len(full_weather_data)} weather data points.")
     
+    if len(image_df) != len(full_weather_data):
+        print('Not enough webcam images available at the specified time span!')
+        return
+    
     return image_df, full_weather_data
 
 
-def generate_weather_animation(image_df, full_weather_data, base_path, output_file_name,frames,fps):
+def generate_weather_animation(station_name, image_df, full_weather_data, base_path, output_file_name,frames,fps):
     
     # Increase animation embedding limit
     plt.rcParams['animation.embed_limit'] = 100
@@ -55,8 +60,11 @@ def generate_weather_animation(image_df, full_weather_data, base_path, output_fi
     dewpoint_ylim = [full_weather_data['TD_10'].min() - 1, full_weather_data['TD_10'].max() + 1]
 
     # Initialize the figure
+    # fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
+    #     3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
+    # )
     fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
-        3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
+        3, 1, figsize=(5, 8), gridspec_kw={'height_ratios': [2.5, 1, 1]}
     )
     plt.subplots_adjust(hspace=0.3)
 
@@ -112,7 +120,9 @@ def generate_weather_animation(image_df, full_weather_data, base_path, output_fi
         ax_webcam.clear()
         date_str = current_time.strftime('%Y%m%d')
         time_str = current_time.strftime('%H%M')
-        image_path = os.path.join(base_path, f"Offenbach-W_{date_str}_{time_str}.jpg")
+
+        image_path = os.path.join(base_path, f"{station_name}_{date_str}_{time_str}.jpg")
+
         if os.path.exists(image_path):
             img = Image.open(image_path)
             ax_webcam.imshow(img)
@@ -133,8 +143,14 @@ def generate_weather_animation(image_df, full_weather_data, base_path, output_fi
 
     # Create the animation
     interval = 500
+    # ani = animation.FuncAnimation(fig, update_plot, frames=frames, interval=interval, blit=False)
+    # ani.save(output_file_name, writer="ffmpeg", fps=fps, dpi = 400)
+
+    writer = FFMpegWriter(fps=fps, bitrate=5000)  # You can try 5000–10000 for high quality
+
     ani = animation.FuncAnimation(fig, update_plot, frames=frames, interval=interval, blit=False)
-    ani.save(output_file_name, writer="ffmpeg", fps=fps)
+    ani.save(output_file_name, writer=writer, dpi=400)
+
     display(HTML(ani.to_jshtml()))
 
 

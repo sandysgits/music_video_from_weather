@@ -79,14 +79,14 @@ def produce_midi_file(data, bpm, start_time, vel_min, vel_max, instruments):
         note_index = round(map_value(y_data, 0, 1, 0, n_notes-1)) 
         midi_data = note_midis[note_index]
 
-        # Konvertiere Wind in Lautstärke
+        # Konvertiere Taupunkt in Lautstärke
         w_data = map_value(wind_speed, 0, 100, 0, 1)
         note_velocity = round(map_value(w_data, 0, 1, vel_min, vel_max)) 
         volume = note_velocity
 
         # Bestimme die Notenlänge
         duration_beats = 1
-        duration = duration_beats *60 / bpm #max(0.1, 2 - (abs(wind_speed) / 10))
+        duration = duration_beats *60 / bpm #max(0.1, 2 - (abs(dew_temp) / 10))
 
         # Ändere Notenlänge der Melodie bei Hoch-/Tiefdruck
         #print(current_pressure_category)
