@@ -1,6 +1,8 @@
 # --- USER CONFIGURATION ---
 from pathlib import Path
 import pandas as pd
+import shutil
+import os
 from src.functions.video_funcs import *
 from src.packages.my_midiutil import MIDIFile
 from src.functions.soni_functions import *
@@ -14,33 +16,38 @@ def create_music_video_from_weather():
     # --- USER CONFIGURATION ---
     # --- Please specify the settings you want ---
     station_id =  "01420"      # Choose the weather station you want to use, e.g. "07341", "01420", ... 
-    mode       = "now"         # You can eather get  a long run (2023-2025) with "historic" or todays data with "now"
+    mode       = "historic"         # You can eather get a long run with "historic" or todays data with "now"
     station    = "Offenbach-W" # Choose the webcam station you want to use, e.g. "Offenbach-O", "Offenbach-W", ...
-
 
     bpm = 420  # beats per minute for MIDI # choose BPM that can be divided by 60 !
     fps = int(bpm / 60)
     instruments = ['xylophone', 'acoustic grand piano', 'xylophone', 'contrabass', 'seashore']
     vel_min = 30
-    vel_max = 100 #70
+    vel_max = 127 #70 # max is 127
     resolution = "400"  # options: 114, 1200, 180, 1920, 400, 640, 816
 
-# ----- CONFIGURATION END ---
     if mode == 'historic':
-        # Define processing timeframe 
-        # only works for 01420 + Offenbach-O or Offenbach-W between 20250301_0930 and Offenbach-O_20250307_1400
+        # Define processing timeframe for "historic" mode
+        # only works for 01420 + Offenbach-O or Offenbach-W between 20250301_0930 and 20250307_1400
         start_datetime = pd.to_datetime("2025-03-01 09:30") 
         end_datetime = pd.to_datetime("2025-03-02 09:10")
+
+
+# ----- CONFIGURATION END ---
 
     # --- PATH SETUP ---
     BASE_DIR = Path.cwd()
     WEATHER_DATA_DIR = BASE_DIR / "weatherdata" / f"{station_id}_{mode}"
+    # if mode == 'now':
+        # shutil.rmtree(WEATHER_DATA_DIR, ignore_errors=True)
     WEATHER_DATA_DIR.mkdir(parents=True, exist_ok=True)
     WEBCAM_DATA_DIR = WEATHER_DATA_DIR / f"webcam_data/{station}"
     AUDIO_OUTPUT_DIR = BASE_DIR / "assets/audio"
     VIDEO_OUTPUT_DIR = BASE_DIR / "assets/video"
     FINAL_OUTPUT_DIR = BASE_DIR / "final_output"
 
+    for path in [WEBCAM_DATA_DIR, AUDIO_OUTPUT_DIR, VIDEO_OUTPUT_DIR, FINAL_OUTPUT_DIR]:
+        os.makedirs(path, exist_ok=True)
 
     if mode == 'now':
         # --- DOWNLOAD WEBCAM DATA ---

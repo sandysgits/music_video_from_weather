@@ -33,7 +33,7 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         midi_data = note_midis[note_index]
         
         #todo check effect, velmin, max anpassen?
-        w_data = map_value(wind_speed, 0, 25, 0, 1)
+        w_data = map_value(wind_speed, 0, 7, 0, 1)
         note_velocity = round(map_value(w_data, 0, 1, vel_min, vel_max)) 
         volume = note_velocity
         
@@ -56,11 +56,11 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         midi.addNote(2, 2, midi_data + 8, start_time, 1.1 *duration, volume - 5)
         
         volume_bass = max(0, min(
-            volume+40 + 10 if pressure < 980 else
-            volume+40 + 5 if pressure < 1013.25 else
-            volume+40 - 10 if pressure > 1040 else
-            volume+40 - 5 if pressure >= 1013.25 else
-            volume+40, 127
+            volume+60 + 10 if pressure < 980 else
+            volume+60 + 5 if pressure < 1013.25 else
+            volume+60 - 10 if pressure > 1040 else
+            volume+60 - 5 if pressure >= 1013.25 else
+            volume+60, vel_max
         ))
         
         

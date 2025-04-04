@@ -1,18 +1,21 @@
 import requests
 import os
 import zipfile
+from datetime import datetime, timedelta
 
 def download_webcam_images_now(station, res, output_path):
 
     stations = [station]
 
     # get current date and days before
-    from datetime import datetime, timedelta
-    date_today = datetime.today()
-    date_yesterday = date_today - timedelta(days=1)
-    date_before_yesterday = date_today - timedelta(days=2)
-    dates = [date_today.strftime('%Y%m%d'),date_yesterday.strftime('%Y%m%d'),
-                date_before_yesterday.strftime('%Y%m%d')]
+    # date_today = datetime.today()
+    # date_yesterday = date_today - timedelta(days=1)
+    # date_before_yesterday = date_today - timedelta(days=2)
+    # dates = [date_today.strftime('%Y%m%d'),date_yesterday.strftime('%Y%m%d'),
+    #             date_before_yesterday.strftime('%Y%m%d')]
+
+    date_today = datetime.today().strftime('%Y%m%d')
+    dates = [date_today]
 
     # create time string
     dt = 10 # for hourly data or 10 for 10 mins data

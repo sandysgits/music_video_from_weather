@@ -58,65 +58,73 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     pressure_ylim = [full_weather_data['PP_10'].min() - 1, full_weather_data['PP_10'].max() + 1]
     temperature_ylim = [full_weather_data['TT_10'].min() - 1, full_weather_data['TT_10'].max() + 1]
     humidity_ylim = [full_weather_data['RF_10'].min() - 5, full_weather_data['RF_10'].max() + 5]
-    dewpoint_ylim = [full_weather_data['TD_10'].min() - 1, full_weather_data['TD_10'].max() + 1]
+    wind_ylim = [full_weather_data['FF_10'].min() - 1, full_weather_data['FF_10'].max() + 1]
 
     # Initialize the figure
     # fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
     #     3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
     # )
     fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
-        3, 1, figsize=(5, 8), gridspec_kw={'height_ratios': [2.5, 1, 1]}
+        3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
     )
     plt.subplots_adjust(hspace=0.3)
 
     # Plot full data lines initially up to the number of frames
     subset_weather_data = full_weather_data.iloc[:frames]
 
+    # Plot pressure and wind speed in first subplot
     ax_pressure.plot(
         subset_weather_data['MESS_DATUM'], subset_weather_data['PP_10'],
         label="Pressure (hPa)", color='blue', linewidth=2
     )
     ax_pressure.set_ylim(pressure_ylim)
     ax_pressure.set_ylabel("Pressure (hPa)")
-    ax_humidity = ax_pressure.twinx()
+    ax_wind = ax_pressure.twinx()
+    ax_wind.plot(
+        subset_weather_data['MESS_DATUM'], subset_weather_data['FF_10'],
+        label="Wind speed (m/s)", color='green', linestyle="--", linewidth=2
+    )
+    ax_wind.set_ylim(wind_ylim)
+    ax_wind.set_ylabel("Wind Speed (m/s)")
+
+    # Plot temperature and humidity in second subplot
+    ax_temperature.plot(
+        subset_weather_data['MESS_DATUM'], subset_weather_data['TT_10'],
+        label="Temperature (°C)", color='orange', linewidth=2
+    )
+    ax_temperature.set_ylim(temperature_ylim[0])
+    ax_temperature.set_ylabel("Temperature (°C)")
+
+    ax_humidity = ax_temperature.twinx()
     ax_humidity.plot(
         subset_weather_data['MESS_DATUM'], subset_weather_data['RF_10'],
         label="Humidity (%)", color='green', linestyle="--", linewidth=2
     )
     ax_humidity.set_ylim(humidity_ylim)
     ax_humidity.set_ylabel("Humidity (%)")
-    ax_temperature.plot(
-        subset_weather_data['MESS_DATUM'], subset_weather_data['TT_10'],
-        label="Temperature (°C)", color='orange', linewidth=2
-    )
-    ax_temperature.plot(
-        subset_weather_data['MESS_DATUM'], subset_weather_data['TD_10'],
-        label="Dewpoint (°C)", color='purple', linestyle="--", linewidth=2
-    )
-    ax_temperature.set_ylim(dewpoint_ylim[0], temperature_ylim[1])
-    ax_temperature.set_ylabel("Temperature (°C)")
+
     ax_pressure.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     ax_temperature.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
     # Initialize scatter points for red dots
     pressure_scatter = ax_pressure.scatter([], [], color='red', s=50)
+    wind_scatter = ax_wind.scatter([], [], color='red', s=50, label='Current Time')
+    temperature_scatter = ax_temperature.scatter([], [], color='red', s=50)
     humidity_scatter = ax_humidity.scatter([], [], color='red', s=50, label='Current Time')
-    temperature_scatter = ax_temperature.scatter([], [], color='red', s=50, label='Current Time')
-    dewpoint_scatter = ax_temperature.scatter([], [], color='red', s=50)
 
     # Create a combined legend for pressure, humidity, and current time
     lines_pressure, labels_pressure = ax_pressure.get_legend_handles_labels()
-    lines_humidity, labels_humidity = ax_humidity.get_legend_handles_labels()
-    ax_pressure.legend(lines_pressure+ lines_humidity , labels_pressure+labels_humidity , loc='upper left')
+    lines_wind, labels_wind = ax_wind.get_legend_handles_labels()
+    ax_pressure.legend(lines_pressure+ lines_wind , labels_pressure+labels_wind , loc='upper left')
     
     # Create a combined legend for temperature, dewpoint, and current time
     lines_temperature, labels_temperature = ax_temperature.get_legend_handles_labels()
-    ax_temperature.legend(lines_temperature , labels_temperature , loc='upper left')
+    lines_humidity, labels_humidity = ax_humidity.get_legend_handles_labels()
+    ax_temperature.legend(lines_temperature + lines_humidity, labels_temperature + labels_humidity , loc='upper left')
 
     # Function to update the animation
     def update_plot(frame):
         current_time = image_df.iloc[frame]['DateTime']
-        print(f"[Frame{frame}] Time: {current_time}")
 
         # Webcam Image Display
         ax_webcam.clear()
@@ -139,9 +147,9 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
 
             # Update scatter points
             pressure_scatter.set_offsets([[latest_time_num, latest_data_point['PP_10']]])
-            humidity_scatter.set_offsets([[latest_time_num, latest_data_point['RF_10']]])
+            wind_scatter.set_offsets([[latest_time_num, latest_data_point['FF_10']]])
             temperature_scatter.set_offsets([[latest_time_num, latest_data_point['TT_10']]])
-            dewpoint_scatter.set_offsets([[latest_time_num, latest_data_point['TD_10']]])
+            humidity_scatter.set_offsets([[latest_time_num, latest_data_point['RF_10']]])
 
     # Create the animation
     interval = 500
