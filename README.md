@@ -12,6 +12,10 @@ How to use map_value? if global min max, then gets problematic -> should also in
 
   - Die vier Jahreszeiten: Tonarten davon bestimmen Tonart je nach Jahreszeit
 
+  - before starting make sure ffmpeg and fluidsynth? are installed (see link)
+
+  - run main when inside the directory
+
 ## Motivation
 Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization, real-world webcam imagery, and sound—we can create a richer, more immersive experience. This project explores how sonification and animation can bring weather data to life, making it more intuitive, engaging, and accessible.
 

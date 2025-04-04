@@ -5,7 +5,7 @@ import mido
 import numpy as np
 
 # Paths
-BASE_DIR = Path("C:/Users/Frank/Documents/python/weather_webcam_sonification/")
+BASE_DIR = Path.cwd()
 midi_path = BASE_DIR / "assets/audio/output_2025-03-01_09-30_2025-03-02_09-10_420.mid"
 sf2_path = BASE_DIR / "assets/FluidR3_GM.sf2"
 wav_path = BASE_DIR / "output.wav"
