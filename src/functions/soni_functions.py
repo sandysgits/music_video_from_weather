@@ -21,6 +21,15 @@ def get_scale(season):
     }
     return scales[season]
 
+def get_minmax_temp(season):
+    minmax = {
+        'spring': (-5, 25),
+        'summer': (5, 35),
+        'autumn': (-10, 25),
+        'winter': (-20, 15)
+    }
+    return minmax[season]
+
 # Gebe Töne der Tonart aus:
 def get_notes(scale):
     notes = {
@@ -218,3 +227,33 @@ def str2midi(note):
         raise ValueError(f"Invalid note: {note}. Note must be between C0 and C8.")
     
     return note_map[note]
+
+
+# Function to get the chords (triads) for the 1st, 4th, and 5th degrees of a scale
+def get_chords_for_scale(scale):
+    """
+    Returns the chords (triads) for the 1st, 4th, and 5th degrees of the given scale.
+    """
+    chords = {
+            'E major': {
+                'I': ['E0', 'G#0', 'B0'],  # E major chord
+                'IV': ['A0', 'C#1', 'E1'],  # A major chord
+                'V': ['B0', 'D#1', 'F#1']   # B major chord
+            },
+            'G minor': {
+                'I': ['G0', 'A#0', 'D1'],  # G minor chord
+                'IV': ['C1', 'D#1', 'G1'],  # C minor chord
+                'V': ['D1', 'F1', 'A#1']   # D minor chord
+            },
+            'F major': {
+                'I': ['F0', 'A0', 'C1'],  # F major chord
+                'IV': ['A#0', 'D1', 'F1'],  # A# major chord
+                'V': ['C1', 'E1', 'G1']   # C major chord
+            },
+            'F minor': {
+                'I': ['F0', 'A#0', 'C1'],  # F minor chord
+                'IV': ['A#0', 'D#1', 'F1'],  # A# minor chord
+                'V': ['C1', 'F1', 'G#1']   # C minor chord
+            }
+        }
+    return chords.get(scale, {})

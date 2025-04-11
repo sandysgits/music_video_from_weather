@@ -21,7 +21,8 @@ def create_music_video_from_weather():
 
     bpm = 420  # beats per minute for MIDI # choose BPM that can be divided by 60 !
     fps = int(bpm / 60)
-    instruments = ['xylophone', 'acoustic grand piano', 'xylophone', 'contrabass', 'seashore']
+    # instruments = ['xylophone', 'acoustic grand piano', 'xylophone', 'contrabass', 'seashore']
+    instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
     vel_min = 30
     vel_max = 127 #70 # max is 127
     resolution = "400"  # options: 114, 1200, 180, 1920, 400, 640, 816

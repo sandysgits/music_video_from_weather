@@ -6,15 +6,19 @@ How to use map_value? if global min max, then gets problematic -> should also in
 
   - goals: CLI: python main.py -webcam "Offenbach-O" -station "Offenbach" -time "now/historic" (if historic: which timespan)
 
-  - delete files after downloading for 'now' ?
-
-  - video: pressure and windspeed one graph / temp and hum in 2nd graph
+  - delete files after downloading for 'now' ? --> auskommentieren main Zeile 41
 
   - Die vier Jahreszeiten: Tonarten davon bestimmen Tonart je nach Jahreszeit
 
-  - before starting make sure ffmpeg and fluidsynth? are installed (see link)
+  - 3 Akkorde, 4er pattern pro Jahreszeit in Begleitung, grad>0 --> höhere Oktave, <0 niedriger
 
-  - run main when inside the directory
+  - Readme: before starting make sure ffmpeg and fluidsynth? are installed (see link)
+
+  - Readme: run main when inside the directory
+
+  - fluidsynth probieren
+
+  - .wav Dateien als Input mit midi für Synthesizer und output .wav oder mp3, recherchieren
 
 ## Motivation
 Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization, real-world webcam imagery, and sound—we can create a richer, more immersive experience. This project explores how sonification and animation can bring weather data to life, making it more intuitive, engaging, and accessible.
