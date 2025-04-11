@@ -3,53 +3,80 @@ import os
 import zipfile
 from datetime import datetime, timedelta
 
-def download_webcam_images_now(station, res, output_path):
-
+def download_webcam_images(station, res, output_path):
     stations = [station]
 
-    # get current date and days before
-    # date_today = datetime.today()
-    # date_yesterday = date_today - timedelta(days=1)
-    # date_before_yesterday = date_today - timedelta(days=2)
-    # dates = [date_today.strftime('%Y%m%d'),date_yesterday.strftime('%Y%m%d'),
-    #             date_before_yesterday.strftime('%Y%m%d')]
+    # get current date and two days before
+    date_today = datetime.today()
+    date_yesterday = date_today - timedelta(days=1)
+    date_before_yesterday = date_today - timedelta(days=2)
+    dates = [date_today.strftime('%Y%m%d'),
+             date_yesterday.strftime('%Y%m%d'),
+             date_before_yesterday.strftime('%Y%m%d')]
 
-    date_today = datetime.today().strftime('%Y%m%d')
-    dates = [date_today]
+    # 10-min interval
+    dt = 10
+    times = [
+        f'{str(i).zfill(4)}'
+        for i in range(0, 2400, dt)
+        if i % 100 not in [60, 70, 80, 90]
+    ]
 
-    # create time string
-    dt = 10 # for hourly data or 10 for 10 mins data
-    times = [f'{str(i).zfill(4)}' for i in range(0, 2400, dt) if i % 100 != 70 and i % 100 != 90 and i % 100 != 80 and i % 100 != 60]
+    downloaded_datetimes = []
 
-    # Loop over all stations and dates to download all images
+    os.makedirs(output_path, exist_ok=True)
+
     for s in stations:
         for d in dates:
             for t in times:
-                # Define the path and URL
-            
                 file_path = os.path.join(output_path, f"{s}_{d}_{t}.jpg")
                 url = f"https://opendata.dwd.de/weather/webcam/{s}/{s}_{d}_{t}_{res}.jpg"
 
-                # Create the directory if it doesn't exist
-                os.makedirs(output_path, exist_ok=True)
-
-                # Check if file already exists
                 if os.path.exists(file_path):
-                # print(f"File already exists, skipping: {file_path}")
                     continue
 
-                # Send a GET request to the URL
-                response = requests.get(url)
+                try:
+                    response = requests.get(url, timeout=10)
+                    if len(response.content) > 1024:
+                        with open(file_path, "wb") as f:
+                            f.write(response.content)
+                        print(f"Downloaded: {file_path}")
 
-                # Check if the image exists (>1024 bytes), if yes, download
-                if len(response.content) > 1024:
-                    with open(file_path, "wb") as f:
-                        f.write(response.content)
-                    print(f"Downloaded: {file_path}")
+                        dt_str = f"{d}{t}"
+                        dt_obj = datetime.strptime(dt_str, "%Y%m%d%H%M")
+                        downloaded_datetimes.append(dt_obj)
+                except Exception as e:
+                    print(f"⚠️ Failed to download {url}: {e}")
+
+    print('✅ Finished downloading webcam images')
+
+    # If no new downloads, try to infer from existing files
+    if not downloaded_datetimes:
+        existing_files = [
+            f for f in os.listdir(output_path)
+            if f.startswith(station) and f.endswith('.jpg')
+        ]
+
+        for fname in existing_files:
+            try:
+                parts = fname.replace('.jpg', '').split('_')
+                date_str = parts[1]
+                time_str = parts[2]
+                dt_str = f"{date_str}{time_str}"
+                dt_obj = datetime.strptime(dt_str, "%Y%m%d%H%M")
+                downloaded_datetimes.append(dt_obj)
+            except Exception as e:
+                print(f"⚠️ Skipping malformed filename: {fname} ({e})")
+
+    if downloaded_datetimes:
+        return min(downloaded_datetimes), max(downloaded_datetimes)
+    else:
+        print("⚠️ No webcam images found.")
+        return None, None
 
 
-        print('Downloaded all webcam images')
-    return
+
+
 
 # --- Function to download station data from DWD Website for today 'now' or last years 'recent'
 def download_station_data(station_id, output_path, type):

@@ -7,7 +7,7 @@ import pandas as pd
 from IPython.display import display, HTML
 from matplotlib.animation import FFMpegWriter
 
-def load_weather_and_image_data(base_path, df, start_datetime, end_datetime, frames=5):
+def load_weather_and_image_data_historic(base_path, df, start_datetime, end_datetime, frames=5):
     """Finds and loads weather and image data for a given timeframe."""
     print(f"Loading data from {start_datetime} to {end_datetime}...")
     
@@ -44,6 +44,61 @@ def load_weather_and_image_data(base_path, df, start_datetime, end_datetime, fra
         return
     
     return image_df, full_weather_data
+
+
+def load_weather_and_image_data_now(base_path, full_weather_data, frames=5):
+    """Loads image + weather data for shared timestamps only."""
+
+    # === Extract datetimes from webcam image filenames ===
+    existing_images = []
+    for filename in os.listdir(base_path):
+        if filename.endswith(".jpg"):
+            parts = filename.split("_")
+            if len(parts) == 3:
+                date_time = parts[1] + " " + parts[2].replace(".jpg", "")
+                existing_images.append(date_time)
+
+    # === Create image_df ===
+    image_df = pd.DataFrame(existing_images, columns=['DateTime'])
+    image_df['DateTime'] = pd.to_datetime(image_df['DateTime'], format='%Y%m%d %H%M')
+    image_df = image_df.sort_values('DateTime').reset_index(drop=True)
+
+    print("🖼️ Available webcam times:")
+    print(image_df.head())
+
+    # === Extract start and end datetime from webcam images ===
+    start_datetime_webcam = image_df['DateTime'].min()
+    end_datetime_webcam = image_df['DateTime'].max()
+
+    print(f"📅 Webcam images range from {start_datetime_webcam} to {end_datetime_webcam}")
+
+    # === Find common timestamps between webcam and weather data ===
+    print(full_weather_data.head())
+    weather_times = full_weather_data['MESS_DATUM']
+    print(weather_times[0])
+    image_times = image_df['DateTime']
+    print(image_times[0])
+
+    common_times = sorted(set(weather_times) & set(image_times))
+
+    if not common_times:
+        print("⚠️ No overlapping datetimes found between images and weather data.")
+        return None, None, None, None
+
+    # === Filter both datasets to keep only common timestamps ===
+    image_df = image_df[image_df['DateTime'].isin(common_times)].reset_index(drop=True)
+    weather_filtered = full_weather_data[full_weather_data['MESS_DATUM'].isin(common_times)].reset_index(drop=True)
+    
+    print(weather_filtered.dtypes)
+
+    # # Optional: limit to N frames (for preview/testing)
+    # if frames and len(image_df) > frames:
+    #     image_df = image_df.iloc[:frames]
+    #     valid_times = image_df['DateTime']
+    #     weather_filtered = weather_filtered[weather_filtered['MESS_DATUM'].isin(valid_times)].reset_index(drop=True)
+
+    return image_df, weather_filtered, start_datetime_webcam, end_datetime_webcam
+
 
 
 def generate_weather_animation(station_name, image_df, full_weather_data, base_path, output_file_name,frames,fps):
@@ -123,6 +178,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
 
     # Function to update the animation
     def update_plot(frame):
+        print(f"frame {frame} generated")
         current_time = image_df.iloc[frame]['DateTime']
 
         # Webcam Image Display
@@ -160,10 +216,17 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     display(HTML(ani.to_jshtml()))
 
 
+
 def read_station_data(file_path):
-    # Read the data into a pandas DataFrame
     print(f"Reading data from {file_path}...")
-    df = pd.read_csv(file_path, sep=';', parse_dates=['MESS_DATUM'])
+
+    # Read data normally (let pandas infer types)
+    df = pd.read_csv(file_path, sep=';', skipinitialspace=True)
+
+    # Manually parse the datetime column
+    df['MESS_DATUM'] = pd.to_datetime(df['MESS_DATUM'], format="%Y%m%d%H%M", errors='coerce')
+
     print(f"Data successfully loaded. Shape: {df.shape}")
+    print(df.dtypes)  # Optional: check column types
     return df
 
