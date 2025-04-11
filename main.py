@@ -29,8 +29,8 @@ def create_music_video_from_weather():
     if mode == 'historic':
         # Define processing timeframe for "historic" mode
         # only works for 01420 + Offenbach-O or Offenbach-W between 20250301_0930 and 20250307_1400
-        start_datetime = pd.to_datetime("2025-03-01 09:30") 
-        end_datetime = pd.to_datetime("2025-03-02 09:10")
+        start_datetime = pd.to_datetime("2025-03-03 09:30") 
+        end_datetime = pd.to_datetime("2025-03-04 09:10")
 
 
 # ----- CONFIGURATION END ---
@@ -38,8 +38,8 @@ def create_music_video_from_weather():
     # --- PATH SETUP ---
     BASE_DIR = Path.cwd()
     WEATHER_DATA_DIR = BASE_DIR / "weatherdata" / f"{station_id}_{mode}"
-    # if mode == 'now':
-        # shutil.rmtree(WEATHER_DATA_DIR, ignore_errors=True)
+    if mode == 'now':
+        shutil.rmtree(WEATHER_DATA_DIR, ignore_errors=True)
     WEATHER_DATA_DIR.mkdir(parents=True, exist_ok=True)
     WEBCAM_DATA_DIR = WEATHER_DATA_DIR / f"webcam_data/{station}"
     AUDIO_OUTPUT_DIR = BASE_DIR / "assets/audio"
@@ -49,54 +49,36 @@ def create_music_video_from_weather():
     for path in [WEBCAM_DATA_DIR, AUDIO_OUTPUT_DIR, VIDEO_OUTPUT_DIR, FINAL_OUTPUT_DIR]:
         os.makedirs(path, exist_ok=True)
 
+
     if mode == 'now':
         # --- DOWNLOAD WEBCAM DATA ---
-        download_webcam_images_now(station,resolution,WEBCAM_DATA_DIR)
-        # TODO: only download the data that does not exist, only for the current day, for which weatherdata exists too
+        start_datetime, end_datetime = download_webcam_images(station,resolution,WEBCAM_DATA_DIR)
+        
+    # --- DOWNLOAD WEATHER DATA ---
+    download_station_data(station_id, WEATHER_DATA_DIR, 'now')
+    download_station_data(station_id, WEATHER_DATA_DIR, 'recent')
 
-        # --- DOWNLOAD WEATHER DATA ---
-        download_station_data(station_id, WEATHER_DATA_DIR, type='now')
-        # download_station_data(station_id, WEATHER_DATA_DIR, type='recent')
-
-        # --- MERGE WEATHER DATA ---
-        print("Merging latest station data...")
-        df_merged, merged_file_path = merge_station_data(station_id, mode)
-
-        # --- PREPARE TIME RANGE ---
-        start_datetime = df_merged['MESS_DATUM'].iloc[0]
-        end_datetime = df_merged['MESS_DATUM'].iloc[-1]
-
-
-    elif mode == 'historic':
-
-        # Webcam  data in database
-
-        # --- DOWNLOAD WEATHER DATA ---
-        download_station_data(station_id, WEATHER_DATA_DIR, type='recent')
-
-        # --- MERGE WEATHER DATA ---
-        print("Merging latest station data...")
-        df_merged, merged_file_path = merge_station_data(station_id, mode)
-
-            # todo find the file  most recently created file, that starts with 'merged'
-        historic_weather_data_path = list(WEATHER_DATA_DIR.glob("merged*.txt"))[0] #  / "merged_weather_data_20230920_0000_20250322_2350_01420.txt"
-
-        df_merged = read_station_data(historic_weather_data_path)
-
-    # --- PREPARE TIME RANGE ---
-    start_str = start_datetime.strftime('%Y-%m-%d_%H-%M')
-    end_str = end_datetime.strftime('%Y-%m-%d_%H-%M')
-    intervals = int((end_datetime - start_datetime).total_seconds() / 600)
+    # --- MERGE WEATHER DATA ---
+    print("Merging latest station data...")
+    df_merged, merged_file_path = merge_station_data(station_id,BASE_DIR, mode)
+    print("Merged file path: ", merged_file_path)
 
     # --- LOAD IMAGE DATA ---
     print("Loading image and weather data for video...")
-    image_df, full_weather_data = load_weather_and_image_data(WEBCAM_DATA_DIR, df_merged, start_datetime, end_datetime)
+    if mode == 'now':
+        image_df, full_weather_data, start_datetime_webcam, end_datetime_webcam = load_weather_and_image_data_now(WEBCAM_DATA_DIR, df_merged)
+
+    if mode == 'historic':
+        image_df, full_weather_data = load_weather_and_image_data_historic(WEBCAM_DATA_DIR, df_merged, start_datetime, end_datetime)
+
     frames = len(image_df)
 
     # --- GENERATE WEATHER VIDEO ---
+    start_str = start_datetime.strftime('%Y-%m-%d_%H-%M')
+    end_str = end_datetime.strftime('%Y-%m-%d_%H-%M')
     output_filename = VIDEO_OUTPUT_DIR / f"{start_str}_to_{end_str}_animation.mp4"
     print("Generating weather animation video...")
-    generate_weather_animation(station, image_df, full_weather_data, WEBCAM_DATA_DIR, output_filename,intervals, fps)
+    generate_weather_animation(station, image_df, full_weather_data, WEBCAM_DATA_DIR, output_filename,frames, fps)
     print(f"Video saved to: {output_filename}")
 
     # --- GENERATE MIDI ---

@@ -2,6 +2,7 @@ from src.functions.video_funcs import read_station_data
 from pathlib import Path
 import subprocess
 import os
+import pandas as pd
 
 #####################################################################################
 # --- Function to merge video and audio files ---
@@ -38,53 +39,87 @@ def merge_video_audio(video_file, audio_file, output_file):
         print("FFmpeg failed:", e)
 
 #####################################################################################
-# --- Function to merge weather data ---
-def merge_station_data(station_id, mode):
-    BASE_DIR = Path.cwd()
-    print('Base directory is:', BASE_DIR)
 
-    if mode == 'now':
-      WEATHER_DATA_DIR = BASE_DIR / "weatherdata" / f"{station_id}_now"
-    elif mode == 'historic':
-      WEATHER_DATA_DIR = BASE_DIR / "weatherdata" / f"{station_id}_historic"
 
-    if mode == 'now':
-    # Find the latest available weather data files
-      WEATHER_FILE_TEMP = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_now_tu_*_{station_id}.txt"))[-1]
-      WEATHER_FILE_WIND = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_now_ff_*_{station_id}.txt"))[-1]
-      WEATHER_FILE_PRECIP = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_now_rr_*_{station_id}.txt"))[-1]
-    elif mode == 'historic':
-      WEATHER_FILE_TEMP = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_min_tu_*_{station_id}.txt"))[-1]
-      WEATHER_FILE_WIND = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_min_ff_*_{station_id}.txt"))[-1]
-      WEATHER_FILE_PRECIP = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_min_rr_*_{station_id}.txt"))[-1]
-    
-  # Read the data
+def merge_station_data(station_id,BASE_DIR, mode):
+
+
+    WEATHER_DATA_DIR = BASE_DIR / "weatherdata" / f"{station_id}_now"
+
+
+    # === Get file paths ===
+    # NOW
+    WEATHER_FILE_TEMP_now = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_now_tu_*_{station_id}.txt"))[-1]
+    WEATHER_FILE_WIND_now = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_now_ff_*_{station_id}.txt"))[-1]
+    WEATHER_FILE_PRECIP_now = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_now_rr_*_{station_id}.txt"))[-1]
+
+    # RECENT
+    WEATHER_FILE_TEMP_recent = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_min_tu_*_{station_id}.txt"))[-1]
+    WEATHER_FILE_WIND_recent = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_min_ff_*_{station_id}.txt"))[-1]
+    WEATHER_FILE_PRECIP_recent = sorted(WEATHER_DATA_DIR.glob(f"produkt_zehn_min_rr_*_{station_id}.txt"))[-1]
+
+    # === Read data ===
     print("Loading weather data...")
-    df_temp = read_station_data(str(WEATHER_FILE_TEMP))
-    df_wind = read_station_data(str(WEATHER_FILE_WIND))
-    df_precip = read_station_data(str(WEATHER_FILE_PRECIP))
+    df_temp_now = read_station_data(str(WEATHER_FILE_TEMP_now))
+    df_wind_now = read_station_data(str(WEATHER_FILE_WIND_now))
+    df_precip_now = read_station_data(str(WEATHER_FILE_PRECIP_now))
 
-    # Merge only on common 'MESS_DATUM' values
-    common_dates = set(df_temp['MESS_DATUM']) & set(df_wind['MESS_DATUM']) & set(df_precip['MESS_DATUM'])
+    df_temp_recent = read_station_data(str(WEATHER_FILE_TEMP_recent))
+    df_wind_recent = read_station_data(str(WEATHER_FILE_WIND_recent))
+    df_precip_recent = read_station_data(str(WEATHER_FILE_PRECIP_recent))
+    print('df_precip_recent', df_precip_recent.head())
 
-    # Filter each dataframe to include only rows with common 'MESS_DATUM'
-    df_temp_filtered = df_temp[df_temp['MESS_DATUM'].isin(common_dates)]
-    df_wind_filtered = df_wind[df_wind['MESS_DATUM'].isin(common_dates)]
-    df_precip_filtered = df_precip[df_precip['MESS_DATUM'].isin(common_dates)]
+    # === Ensure consistent datetime format in all MESS_DATUM columns ===
+    for df in [df_temp_now, df_wind_now, df_precip_now,
+            df_temp_recent, df_wind_recent, df_precip_recent]:
+        df['MESS_DATUM'] = pd.to_datetime(df['MESS_DATUM'], format="%Y%m%d %H%M", errors='coerce')
+    
+    print('df_precip_recent fixed?', df_precip_recent.head())
 
-    # Perform inner merge on 'MESS_DATUM'
-    df_merged = df_temp_filtered.merge(df_wind_filtered, on='MESS_DATUM', how='inner', suffixes=('', '_wind'))
-    df_merged = df_merged.merge(df_precip_filtered, on='MESS_DATUM', how='inner', suffixes=('', '_precip'))
+    # === Merge NOW data ===
+    common_dates_now = set(df_temp_now['MESS_DATUM']) & set(df_wind_now['MESS_DATUM']) & set(df_precip_now['MESS_DATUM'])
 
-    # Remove duplicate 'STATIONS_ID' columns if present
-    df_merged = df_merged.loc[:, ~df_merged.columns.duplicated()]
+    df_temp_filtered_now = df_temp_now[df_temp_now['MESS_DATUM'].isin(common_dates_now)]
+    df_wind_filtered_now = df_wind_now[df_wind_now['MESS_DATUM'].isin(common_dates_now)]
+    df_precip_filtered_now = df_precip_now[df_precip_now['MESS_DATUM'].isin(common_dates_now)]
 
-    # Determine the first and last timestamp for the filename and format them
-    start_time = df_merged['MESS_DATUM'].iloc[0].strftime('%Y%m%d_%H%M')
-    end_time = df_merged['MESS_DATUM'].iloc[-1].strftime('%Y%m%d_%H%M')
-    merged_file_path = WEATHER_DATA_DIR / f"merged_weather_data_{start_time}_{end_time}_{station_id}.txt"
+    df_merged_now = df_temp_filtered_now.merge(df_wind_filtered_now, on='MESS_DATUM', how='inner', suffixes=('', '_wind'))
+    df_merged_now = df_merged_now.merge(df_precip_filtered_now, on='MESS_DATUM', how='inner', suffixes=('', '_precip'))
+    df_merged_now = df_merged_now.loc[:, ~df_merged_now.columns.duplicated()]
 
-    df_merged.to_csv(merged_file_path, sep=';', index=False)
-    print(f"Merged weather data saved at: {merged_file_path}")
+    start_time_now = df_merged_now['MESS_DATUM'].iloc[0].strftime('%Y%m%d_%H%M')
+    end_time_now = df_merged_now['MESS_DATUM'].iloc[-1].strftime('%Y%m%d_%H%M')
+    merged_file_path_now = WEATHER_DATA_DIR / f"merged_weather_data_{start_time_now}_{end_time_now}_{station_id}.txt"
+    df_merged_now.to_csv(merged_file_path_now, sep=';', index=False)
 
-    return df_merged, merged_file_path
+    # === Merge RECENT data ===
+    common_dates_recent = set(df_temp_recent['MESS_DATUM']) & set(df_wind_recent['MESS_DATUM']) & set(df_precip_recent['MESS_DATUM'])
+
+    df_temp_filtered_recent = df_temp_recent[df_temp_recent['MESS_DATUM'].isin(common_dates_recent)]
+    df_wind_filtered_recent = df_wind_recent[df_wind_recent['MESS_DATUM'].isin(common_dates_recent)]
+    df_precip_filtered_recent = df_precip_recent[df_precip_recent['MESS_DATUM'].isin(common_dates_recent)]
+
+    df_merged_recent = df_temp_filtered_recent.merge(df_wind_filtered_recent, on='MESS_DATUM', how='inner', suffixes=('', '_wind'))
+    df_merged_recent = df_merged_recent.merge(df_precip_filtered_recent, on='MESS_DATUM', how='inner', suffixes=('', '_precip'))
+    df_merged_recent = df_merged_recent.loc[:, ~df_merged_recent.columns.duplicated()]
+
+    start_time_recent = df_merged_recent['MESS_DATUM'].iloc[0].strftime('%Y%m%d_%H%M')
+    end_time_recent = df_merged_recent['MESS_DATUM'].iloc[-1].strftime('%Y%m%d_%H%M')
+    merged_file_path_recent = WEATHER_DATA_DIR / f"merged_weather_data_{start_time_recent}_{end_time_recent}_{station_id}.txt"
+    df_merged_recent.to_csv(merged_file_path_recent, sep=';', index=False)
+
+    # === Merge BOTH dataframes into one along the datetime axis ===
+    df_merged_all = pd.concat([df_merged_recent, df_merged_now])
+    #df_merged_all = df_merged_all.sort_values(by='MESS_DATUM').reset_index(drop=True)
+    print(df_merged_now.shape)
+    print(df_merged_recent.shape)
+    print(df_merged_all.shape)
+    start_time_all = df_merged_all['MESS_DATUM'].iloc[0].strftime('%Y%m%d_%H%M')
+    end_time_all = df_merged_all['MESS_DATUM'].iloc[-1].strftime('%Y%m%d_%H%M')
+    merged_file_path_all = WEATHER_DATA_DIR / f"{station_id}_merged_full_{start_time_all}_{end_time_all}.txt"
+    
+    df_merged_all.to_csv(merged_file_path_all, sep=';', index=False)
+  
+    print("✅ Weather data merged and saved for both 'now' and 'recent'.")
+
+    return df_merged_all, merged_file_path_all
