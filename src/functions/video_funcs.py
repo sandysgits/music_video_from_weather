@@ -56,7 +56,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     # Stabilize y-axis limits
     pressure_ylim = [full_weather_data['PP_10'].min() - 1, full_weather_data['PP_10'].max() + 1]
     temperature_ylim = [full_weather_data['TT_10'].min() - 1, full_weather_data['TT_10'].max() + 1]
-    humidity_ylim = [full_weather_data['RF_10'].min() - 5, full_weather_data['RF_10'].max() + 5]
+    precipitation_ylim = [0, full_weather_data['RWS_10'].max() + 1]
     wind_ylim = [full_weather_data['FF_10'].min() - 1, full_weather_data['FF_10'].max() + 1]
 
     # Initialize the figure
@@ -86,7 +86,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     ax_wind.set_ylim(wind_ylim)
     ax_wind.set_ylabel("Wind Speed (m/s)")
 
-    # Plot temperature and humidity in second subplot
+    # Plot temperature and precipitation in second subplot
     ax_temperature.plot(
         subset_weather_data['MESS_DATUM'], subset_weather_data['TT_10'],
         label="Temperature (°C)", color='orange', linewidth=2
@@ -94,13 +94,13 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     ax_temperature.set_ylim(temperature_ylim[0])
     ax_temperature.set_ylabel("Temperature (°C)")
 
-    ax_humidity = ax_temperature.twinx()
-    ax_humidity.plot(
-        subset_weather_data['MESS_DATUM'], subset_weather_data['RF_10'],
-        label="Humidity (%)", color='green', linestyle="--", linewidth=2
+    ax_precipitation = ax_temperature.twinx()
+    ax_precipitation.plot(
+        subset_weather_data['MESS_DATUM'], subset_weather_data['RWS_10'],
+        label="Precipitation (mm)", color='green', linestyle="--", linewidth=2
     )
-    ax_humidity.set_ylim(humidity_ylim)
-    ax_humidity.set_ylabel("Humidity (%)")
+    ax_precipitation.set_ylim(precipitation_ylim)
+    ax_precipitation.set_ylabel("Precipitation (mm)")
 
     ax_pressure.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     ax_temperature.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
@@ -109,17 +109,17 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     pressure_scatter = ax_pressure.scatter([], [], color='red', s=50)
     wind_scatter = ax_wind.scatter([], [], color='red', s=50, label='Current Time')
     temperature_scatter = ax_temperature.scatter([], [], color='red', s=50)
-    humidity_scatter = ax_humidity.scatter([], [], color='red', s=50, label='Current Time')
+    precipitation_scatter = ax_precipitation.scatter([], [], color='red', s=50, label='Current Time')
 
-    # Create a combined legend for pressure, humidity, and current time
+    # Create a combined legend for pressure, precipitation, and current time
     lines_pressure, labels_pressure = ax_pressure.get_legend_handles_labels()
     lines_wind, labels_wind = ax_wind.get_legend_handles_labels()
     ax_pressure.legend(lines_pressure+ lines_wind , labels_pressure+labels_wind , loc='upper left')
     
     # Create a combined legend for temperature, dewpoint, and current time
     lines_temperature, labels_temperature = ax_temperature.get_legend_handles_labels()
-    lines_humidity, labels_humidity = ax_humidity.get_legend_handles_labels()
-    ax_temperature.legend(lines_temperature + lines_humidity, labels_temperature + labels_humidity , loc='upper left')
+    lines_precipitation, labels_precipitation = ax_precipitation.get_legend_handles_labels()
+    ax_temperature.legend(lines_temperature + lines_precipitation, labels_temperature + labels_precipitation , loc='upper left')
 
     # Function to update the animation
     def update_plot(frame):
@@ -148,7 +148,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
             pressure_scatter.set_offsets([[latest_time_num, latest_data_point['PP_10']]])
             wind_scatter.set_offsets([[latest_time_num, latest_data_point['FF_10']]])
             temperature_scatter.set_offsets([[latest_time_num, latest_data_point['TT_10']]])
-            humidity_scatter.set_offsets([[latest_time_num, latest_data_point['RF_10']]])
+            precipitation_scatter.set_offsets([[latest_time_num, latest_data_point['RWS_10']]])
 
     # Create the animation
     interval = 500
