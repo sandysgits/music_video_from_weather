@@ -9,14 +9,14 @@ from src.functions.soni_functions import *
 from src.functions.make_midi import *
 from src.functions.midi_to_wav_prettymidi import *
 from src.functions.merge import *
-from src.functions.download_new import *
+from src.functions.download import *
 
 def create_music_video_from_weather():
     print("Hello from weather-webcam-sonification! Let's create some music video from the weather!")
     # --- USER CONFIGURATION ---
     # --- Please specify the settings you want ---
     station_id =  "01420"      # Choose the weather station you want to use, e.g. "07341", "01420", ... 
-    mode       = "historic"         # You can eather get a long run with "historic" or todays data with "now"
+    mode       = "now"         # You can eather get a long run with "historic" or todays data with "now"
     station    = "Offenbach-W" # Choose the webcam station you want to use, e.g. "Offenbach-O", "Offenbach-W", ...
 
     bpm = 420  # beats per minute for MIDI # choose BPM that can be divided by 60 !
@@ -55,7 +55,8 @@ def create_music_video_from_weather():
         # TODO: only download the data that does not exist, only for the current day, for which weatherdata exists too
 
         # --- DOWNLOAD WEATHER DATA ---
-        download_station_data_now(station_id, WEATHER_DATA_DIR)
+        download_station_data(station_id, WEATHER_DATA_DIR, type='now')
+        # download_station_data(station_id, WEATHER_DATA_DIR, type='recent')
 
         # --- MERGE WEATHER DATA ---
         print("Merging latest station data...")
@@ -66,13 +67,12 @@ def create_music_video_from_weather():
         end_datetime = df_merged['MESS_DATUM'].iloc[-1]
 
 
-
-    if mode == 'historic':
+    elif mode == 'historic':
 
         # Webcam  data in database
 
         # --- DOWNLOAD WEATHER DATA ---
-        download_station_data_historic(station_id, WEATHER_DATA_DIR)
+        download_station_data(station_id, WEATHER_DATA_DIR, type='recent')
 
         # --- MERGE WEATHER DATA ---
         print("Merging latest station data...")
@@ -83,10 +83,7 @@ def create_music_video_from_weather():
 
         df_merged = read_station_data(historic_weather_data_path)
 
-
-
-
-
+    # --- PREPARE TIME RANGE ---
     start_str = start_datetime.strftime('%Y-%m-%d_%H-%M')
     end_str = end_datetime.strftime('%Y-%m-%d_%H-%M')
     intervals = int((end_datetime - start_datetime).total_seconds() / 600)

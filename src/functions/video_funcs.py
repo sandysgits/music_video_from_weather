@@ -23,7 +23,6 @@ def load_weather_and_image_data(base_path, df, start_datetime, end_datetime, fra
     # Convert to DataFrame
     image_df = pd.DataFrame(existing_images, columns=['DateTime'])
     image_df['DateTime'] = pd.to_datetime(image_df['DateTime'], format='%Y%m%d %H%M')
-
     # Filter by the given time range
     image_df = image_df[(image_df['DateTime'] >= start_datetime) & (image_df['DateTime'] <= end_datetime)]
     
@@ -164,7 +163,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
 def read_station_data(file_path):
     # Read the data into a pandas DataFrame
     print(f"Reading data from {file_path}...")
-    df = pd.read_csv(file_path, sep=';', parse_dates=['MESS_DATUM'], dayfirst=True)
+    df = pd.read_csv(file_path, sep=';', parse_dates=['MESS_DATUM'])
     print(f"Data successfully loaded. Shape: {df.shape}")
     return df
 

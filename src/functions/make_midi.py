@@ -16,6 +16,8 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
     start_time = 0
     duration = 3
     data = data.iloc[::duration]
+
+    max_wind_speed = 15   # this is the wind speed with the highest volume
     
     for _, row in data.iterrows():
 
@@ -26,14 +28,14 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         # todo: je nach Jahreszeit range von temp ändern
 
         temp = row['TT_10'] if row['TT_10'] >= -20.0 else -20.0 #todo an Jahreszeit anpassen
-        wind_speed = abs(row['FF_10']) if abs(row['FF_10']) <= 25 else 25 #todo dew to windspeed ! also in video!
+        wind_speed = abs(row['FF_10']) if abs(row['FF_10']) <= max_wind_speed else max_wind_speed #todo dew to windspeed ! also in video!
         pressure = row['PP_10'] if row['PP_10'] >= 100 else 900
         
         note_index = round(map_value(temp, -10, 25, 0, len(note_midis) - 1)) #todo Bereich
         midi_data = note_midis[note_index]
         
         #todo check effect, velmin, max anpassen?
-        w_data = map_value(wind_speed, 0, 7, 0, 1)
+        w_data = map_value(wind_speed, 0, max_wind_speed, 0, 1)
         note_velocity = round(map_value(w_data, 0, 1, vel_min, vel_max)) 
         volume = note_velocity
         
@@ -48,12 +50,12 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         
         # temperature
         if (current_pressure_category == 'high'): # spiele 2 Töne pro duration
-            midi.addNote(1, 1, midi_data - 8, start_time, 0.5*duration, volume -10)
-            midi.addNote(1, 1, midi_data - 8, start_time + 0.5*duration, 0.5*duration, volume -10)
+            midi.addNote(1, 1, midi_data - 5, start_time, 0.5*duration, volume -10)
+            midi.addNote(1, 1, midi_data - 5, start_time + 0.5*duration, 0.5*duration, volume -10)
         else: # spiele einen TOn pro duration
-            midi.addNote(1, 1, midi_data - 8, start_time, duration, volume -10)
+            midi.addNote(1, 1, midi_data - 5, start_time, duration, volume -10)
         
-        midi.addNote(2, 2, midi_data + 8, start_time, 1.1 *duration, volume - 5)
+        midi.addNote(2, 2, midi_data + 7, start_time, 1.1 *duration, volume - 5)
         
         volume_bass = max(0, min(
             volume+60 + 10 if pressure < 980 else
@@ -65,9 +67,9 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         
         
 
-        midi.addNote(3, 3, midi_data - 32, start_time, 0.3 , volume_bass)
-        midi.addNote(3, 3, midi_data - 32, start_time + 1, 0.3 , volume_bass)
-        midi.addNote(3, 3, midi_data - 32, start_time + 2, 0.3 , volume_bass)
+        midi.addNote(3, 3, midi_data - 36, start_time, 0.3 , volume_bass)
+        midi.addNote(3, 3, midi_data - 36, start_time + 1, 0.3 , volume_bass)
+        midi.addNote(3, 3, midi_data - 36, start_time + 2, 0.3 , volume_bass)
 
         start_time += duration
     
