@@ -73,11 +73,8 @@ def load_weather_and_image_data_now(base_path, full_weather_data, frames=5):
     print(f"📅 Webcam images range from {start_datetime_webcam} to {end_datetime_webcam}")
 
     # === Find common timestamps between webcam and weather data ===
-    print(full_weather_data.head())
     weather_times = full_weather_data['MESS_DATUM']
-    print(weather_times[0])
     image_times = image_df['DateTime']
-    print(image_times[0])
 
     common_times = sorted(set(weather_times) & set(image_times))
 
@@ -88,14 +85,6 @@ def load_weather_and_image_data_now(base_path, full_weather_data, frames=5):
     # === Filter both datasets to keep only common timestamps ===
     image_df = image_df[image_df['DateTime'].isin(common_times)].reset_index(drop=True)
     weather_filtered = full_weather_data[full_weather_data['MESS_DATUM'].isin(common_times)].reset_index(drop=True)
-    
-    print(weather_filtered.dtypes)
-
-    # # Optional: limit to N frames (for preview/testing)
-    # if frames and len(image_df) > frames:
-    #     image_df = image_df.iloc[:frames]
-    #     valid_times = image_df['DateTime']
-    #     weather_filtered = weather_filtered[weather_filtered['MESS_DATUM'].isin(valid_times)].reset_index(drop=True)
 
     return image_df, weather_filtered, start_datetime_webcam, end_datetime_webcam
 
@@ -115,9 +104,6 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     wind_ylim = [full_weather_data['FF_10'].min() - 1, full_weather_data['FF_10'].max() + 1]
 
     # Initialize the figure
-    # fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
-    #     3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
-    # )
     fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
         3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
     )
@@ -178,7 +164,6 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
 
     # Function to update the animation
     def update_plot(frame):
-        print(f"frame {frame} generated")
         current_time = image_df.iloc[frame]['DateTime']
 
         # Webcam Image Display

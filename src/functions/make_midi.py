@@ -33,8 +33,8 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         min_temp, max_temp = get_minmax_temp(season)
 
         # Make sure values do not exceed the allowed range
-        temp = row['TT_10'] if row['TT_10'] < min_temp else min_temp 
-        temp = row['TT_10'] if row['TT_10'] >= max_temp else max_temp
+        temp = row['TT_10'] if row['TT_10'] >= min_temp else min_temp 
+        temp = row['TT_10'] if row['TT_10'] < max_temp else max_temp
         wind_speed = abs(row['FF_10']) if abs(row['FF_10']) <= max_wind_speed else max_wind_speed 
         pressure = row['PP_10'] if row['PP_10'] >= 100 else 900
         
