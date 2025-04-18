@@ -49,8 +49,8 @@ Set options inside `main.py`:
 #### **🕚 'now' mode**
 
 - Downloads **live** weather and webcam data.
-- Webcam data is only available for the **past 3 days**.
-- Generates an animation of the last \~72 hours.
+- Webcam data is only available for the **past 2 days**.
+- Generates an animation of the last \~48 hours.
 
 #### **📅 'historic' mode**
 
@@ -106,13 +106,13 @@ python main.py
 
 ## ❌ Current Limitations
 
-- MIDI-to-WAV conversion is basic
-  - Ideally use `fluidsynth` or other external synth for better quality
-- Webcam images only available from DWD for the past 3 days
+- MIDI-to-WAV conversion method is basic
+  - Ideally use `fluidsynth` or other external synth for better quality, but this is not yet implemented
+  - You can inspect or remix the MIDI file properly using tools like: [https://signal.vercel.app/](https://signal.vercel.app/)
+- Webcam images only available from DWD for the past 2 days
   - No historic webcam dataset can be provided in this repo
 - Limited set of webcam locations
-- You can inspect or remix the MIDI file properly using tools like:
-  - [https://signal.vercel.app/](https://signal.vercel.app/)
+
 
 ## 🙌 Contribution
 
