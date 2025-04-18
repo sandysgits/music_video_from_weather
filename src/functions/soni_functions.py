@@ -3,7 +3,7 @@ import sys
 #################################################################################
 # --- Function to get the season based on the date ---
 def get_season(date_str):
-    month = int(date_str[4:6])  # Extrahiere den Monat
+    month = int(date_str[5:7])  # Extrahiere den Monat
     if 3 <= month <= 5:
         return 'spring'  # Frühling (E-Dur)
     elif 6 <= month <= 8:
@@ -245,24 +245,24 @@ def get_chords_for_scale(scale):
     """
     chords = {
             'E major': {
-                'I': ['E2', 'G#2', 'B2'],  # E major chord
-                'IV': ['A2', 'C#3', 'E3'],  # A major chord
-                'V': ['B2', 'D#3', 'F#3']   # B major chord
+                'I': ['E3', 'G#3', 'B3'],  # E major chord
+                'IV': ['A3', 'C#4', 'E4'],  # A major chord
+                'V': ['B3', 'D#4', 'F#4']   # B major chord
             },
             'G minor': {
-                'I': ['G2', 'A#2', 'D3'],  # G minor chord
-                'IV': ['C3', 'D#3', 'G3'],  # C minor chord
-                'V': ['D3', 'F3', 'A#3']   # D minor chord
+                'I': ['G3', 'A#3', 'D4'],  # G minor chord
+                'IV': ['C4', 'D#4', 'G4'],  # C minor chord
+                'V': ['D4', 'F4', 'A4']   # D minor chord
             },
             'F major': {
-                'I': ['F2', 'A2', 'C3'],  # F major chord
-                'IV': ['A#2', 'D3', 'F3'],  # A# major chord
-                'V': ['C3', 'E3', 'G3']   # C major chord
+                'I': ['F3', 'A3', 'C4'],  # F major chord
+                'IV': ['A#3', 'D4', 'F4'],  # A# major chord
+                'V': ['C4', 'E4', 'G4']   # C major chord
             },
             'F minor': {
-                'I': ['F2', 'A#2', 'C3'],  # F minor chord
-                'IV': ['A#2', 'C#3', 'F3'],  # A# minor chord
-                'V': ['C3', 'D#3', 'G3']   # C minor chord
+                'I': ['F3', 'G#3', 'C4'],  # F minor chord
+                'IV': ['A#3', 'C#4', 'F4'],  # A# minor chord
+                'V': ['C4', 'D#4', 'G4']   # C minor chord
             }
         }
     return chords.get(scale, {})

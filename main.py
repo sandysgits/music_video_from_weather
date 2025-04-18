@@ -21,7 +21,7 @@ def create_music_video_from_weather():
     mode       = "now"         # You can eather get a long run with "historic" or todays data with "now"
     station    = "Offenbach-W" # Choose the webcam station you want to use, e.g. "Offenbach-O", "Offenbach-W", ...
 
-    bpm = 400  # beats per minute for MIDI # choose BPM that can be divided by 60 !
+    bpm = 420  # beats per minute for MIDI # choose BPM that can be divided by 60 !
     fps = int(bpm / 60)
 
     # Choose your instruments = ['Melody', 'Bass', 'Harmony', 'Drums', 'Rain Sounds']
@@ -39,7 +39,7 @@ def create_music_video_from_weather():
         # only works for 01420 + Offenbach-O or Offenbach-W 
         # between 2025-03-01 09:30 and 2025-03-07 14:00
         start_datetime = pd.to_datetime("2025-03-01 09:30") 
-        end_datetime = pd.to_datetime("2025-03-07 14:00")
+        end_datetime = pd.to_datetime("2025-03-05 09:30")
 
 
 # ----- CONFIGURATION END ---

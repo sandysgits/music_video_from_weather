@@ -212,7 +212,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
     writer = FFMpegWriter(fps=fps, bitrate=5000)  # You can try 5000–10000 for high quality
 
     ani = animation.FuncAnimation(fig, update_plot, frames=frames, interval=interval, blit=False)
-    ani.save(output_file_name, writer=writer, dpi=200)
+    ani.save(output_file_name, writer=writer, dpi=100)
 
     display(HTML(ani.to_jshtml()))
 
