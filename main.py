@@ -13,25 +13,33 @@ from src.functions.download import *
 
 def create_music_video_from_weather():
     print("Hello from weather-webcam-sonification! Let's create some music video from the weather!")
+
     # --- USER CONFIGURATION ---
     # --- Please specify the settings you want ---
+
     station_id =  "01420"      # Choose the weather station you want to use, e.g. "07341", "01420", ... 
     mode       = "now"         # You can eather get a long run with "historic" or todays data with "now"
     station    = "Offenbach-W" # Choose the webcam station you want to use, e.g. "Offenbach-O", "Offenbach-W", ...
 
-    bpm = 420  # beats per minute for MIDI # choose BPM that can be divided by 60 !
+    bpm = 400  # beats per minute for MIDI # choose BPM that can be divided by 60 !
     fps = int(bpm / 60)
-    instruments = ['xylophone', 'acoustic grand piano', 'xylophone', 'contrabass', 'seashore']
-    # instruments = ['violin', 'viola', 'cello', 'contrabass', 'seashore']
+
+    # Choose your instruments = ['Melody', 'Bass', 'Harmony', 'Drums', 'Rain Sounds']
+    instruments = ['alto sax', 'tuba', 'accordion', 'synth drum', 'fx 1 (rain)']
+
+    # Set the minimum and maximum velocity of the sound
     vel_min = 30
-    vel_max = 127 #70 # max is 127
+    vel_max = 127 # max is 127
+
+    # Set the resolution of the webcam images
     resolution = "400"  # options: 114, 1200, 180, 1920, 400, 640, 816
 
+    # Set the start and end time for the video if you chose "historic" mode
     if mode == 'historic':
-        # Define processing timeframe for "historic" mode
-        # only works for 01420 + Offenbach-O or Offenbach-W between 20250301_0930 and 20250307_1400
-        start_datetime = pd.to_datetime("2025-03-03 09:30") 
-        end_datetime = pd.to_datetime("2025-03-04 09:10")
+        # only works for 01420 + Offenbach-O or Offenbach-W 
+        # between 2025-03-01 09:30 and 2025-03-07 14:00
+        start_datetime = pd.to_datetime("2025-03-01 09:30") 
+        end_datetime = pd.to_datetime("2025-03-07 14:00")
 
 
 # ----- CONFIGURATION END ---
@@ -68,8 +76,7 @@ def create_music_video_from_weather():
     print("Loading image and weather data for video...")
     if mode == 'now':
         image_df, full_weather_data, start_datetime_webcam, end_datetime_webcam = load_weather_and_image_data_now(WEBCAM_DATA_DIR, df_merged)
-
-    if mode == 'historic':
+    elif mode == 'historic':
         image_df, full_weather_data = load_weather_and_image_data_historic(WEBCAM_DATA_DIR, df_merged, start_datetime, end_datetime)
 
     frames = len(image_df)

@@ -245,24 +245,24 @@ def get_chords_for_scale(scale):
     """
     chords = {
             'E major': {
-                'I': ['E0', 'G#0', 'B0'],  # E major chord
-                'IV': ['A0', 'C#1', 'E1'],  # A major chord
-                'V': ['B0', 'D#1', 'F#1']   # B major chord
+                'I': ['E2', 'G#2', 'B2'],  # E major chord
+                'IV': ['A2', 'C#3', 'E3'],  # A major chord
+                'V': ['B2', 'D#3', 'F#3']   # B major chord
             },
             'G minor': {
-                'I': ['G0', 'A#0', 'D1'],  # G minor chord
-                'IV': ['C1', 'D#1', 'G1'],  # C minor chord
-                'V': ['D1', 'F1', 'A#1']   # D minor chord
+                'I': ['G2', 'A#2', 'D3'],  # G minor chord
+                'IV': ['C3', 'D#3', 'G3'],  # C minor chord
+                'V': ['D3', 'F3', 'A#3']   # D minor chord
             },
             'F major': {
-                'I': ['F0', 'A0', 'C1'],  # F major chord
-                'IV': ['A#0', 'D1', 'F1'],  # A# major chord
-                'V': ['C1', 'E1', 'G1']   # C major chord
+                'I': ['F2', 'A2', 'C3'],  # F major chord
+                'IV': ['A#2', 'D3', 'F3'],  # A# major chord
+                'V': ['C3', 'E3', 'G3']   # C major chord
             },
             'F minor': {
-                'I': ['F0', 'A#0', 'C1'],  # F minor chord
-                'IV': ['A#0', 'D#1', 'F1'],  # A# minor chord
-                'V': ['C1', 'F1', 'G#1']   # C minor chord
+                'I': ['F2', 'A#2', 'C3'],  # F minor chord
+                'IV': ['A#2', 'C#3', 'F3'],  # A# minor chord
+                'V': ['C3', 'D#3', 'G3']   # C minor chord
             }
         }
     return chords.get(scale, {})

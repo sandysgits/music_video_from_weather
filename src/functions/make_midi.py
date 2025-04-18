@@ -20,7 +20,7 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
     
     # Initialize MIDI File with 5 tracks
     midi = MIDIFile(5)
-    track_names = ["Main Melody", "Harmony", "Harmony", "Bass", "Rain Sounds"]
+    track_names = ["Main Melody", "Bass", "Harmony", "Drums", "Rain Sounds"]
     
     for i, name in enumerate(track_names):
         midi.addTrackName(i, 0, name)
@@ -79,10 +79,10 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
         # Add the harmony to track 1 (temperature - 5 notes)
         # when pressure gradient is positive, play 2 short notes, else 1 long note
         if (pressure_gradient >= 0): 
-            midi.addNote(1, 1, midi_data - 5, start_time, 0.5*duration, volume -10)
-            midi.addNote(1, 1, midi_data - 5, start_time + 0.5*duration, 0.5*duration, volume -10)
+            midi.addNote(1, 1, midi_data - 24, start_time, 0.5*duration, volume -10)
+            midi.addNote(1, 1, midi_data - 24, start_time + 0.5*duration, 0.5*duration, volume -10)
         else: 
-            midi.addNote(1, 1, midi_data - 5, start_time, duration, volume -10)
+            midi.addNote(1, 1, midi_data - 24, start_time, duration, volume -10)
         
          # Add chord to track 2 every 3rd note
         if idx % 3 == 0:
@@ -98,21 +98,21 @@ def produce_midi_file(data, bpm, vel_min, vel_max, instruments):
             
             # Add the chord notes to track 2
             for note in chord_notes_midi:
-                midi.addNote(2, 2, note, start_time, 1.5*duration, vel_max - 20)
+                midi.addNote(2, 2, note, start_time, 3*duration, volume -10)
 
         # define volume for bass notes depending on pressure
-        volume_bass = max(0, min(
-            volume+60 + 10 if pressure < 980 else
-            volume+60 + 5 if pressure < 1013.25 else
-            volume+60 - 10 if pressure > 1040 else
-            volume+60 - 5 if pressure >= 1013.25 else
-            volume+60, vel_max
+        volume_bass = max(vel_min, min(
+            volume-10 + 10 if pressure < 980 else
+            volume-10 + 5 if pressure < 1013.25 else
+            volume-10 - 10 if pressure > 1040 else
+            volume-10 - 5 if pressure >= 1013.25 else
+            volume-10, vel_max
         ))
 
         # Add bass notes to track 3 (temperature - 36)
-        midi.addNote(3, 3, midi_data - 36, start_time, duration/2 , volume_bass)
-        midi.addNote(3, 3, midi_data - 36, start_time + duration/2, duration/2 , volume_bass)
-        # midi.addNote(3, 3, midi_data - 36, start_time + 2, duration/3 , volume_bass)
+        midi.addNote(3, 3, midi_data - 24, start_time, duration/3 , volume_bass)
+        midi.addNote(3, 3, midi_data - 24, start_time + duration/3, duration/3 , volume_bass)
+        midi.addNote(3, 3, midi_data - 24, start_time + 2*duration/3, duration/3 , volume_bass)
 
         # Add rain sounds to track 4 (rain)
         if rain > 0:

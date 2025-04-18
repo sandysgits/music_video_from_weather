@@ -67,7 +67,6 @@ def load_weather_and_image_data_now(base_path, full_weather_data, frames=5):
     image_df = image_df.sort_values('DateTime').reset_index(drop=True)
 
     print("🖼️ Available webcam times:")
-    print(image_df.head())
 
     # === Extract start and end datetime from webcam images ===
     start_datetime_webcam = image_df['DateTime'].min()
@@ -121,7 +120,7 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
 
     # Initialize the figure
     fig, (ax_webcam, ax_pressure, ax_temperature) = plt.subplots(
-        3, 1, figsize=(10, 16), gridspec_kw={'height_ratios': [5, 2, 2]}
+        3, 1, figsize=(10, 12), gridspec_kw={'height_ratios': [5, 2, 2]}
     )
     plt.subplots_adjust(hspace=0.3)
 
@@ -193,7 +192,8 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
             img = Image.open(image_path)
             ax_webcam.imshow(img)
             ax_webcam.axis('off')
-            ax_webcam.set_title(f"Webcam Image\n{(current_time + pd.Timedelta(hours=1)):%H:%M} CET", fontsize=14)
+            ax_webcam.set_xlim(0, img.size[0])  # Set x-axis limits to image width
+            ax_webcam.set_ylim(img.size[1], 0)  # Set y-axis limits to image height (inverted for correct orientation)
 
         # Filter weather data up to current time
         weather_data = subset_weather_data[subset_weather_data['MESS_DATUM'] <= current_time]
@@ -228,6 +228,5 @@ def read_station_data(file_path):
     df['MESS_DATUM'] = pd.to_datetime(df['MESS_DATUM'], format="%Y%m%d%H%M", errors='coerce')
 
     print(f"Data successfully loaded. Shape: {df.shape}")
-    print(df.dtypes)  # Optional: check column types
     return df
 
