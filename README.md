@@ -62,9 +62,9 @@ Set options inside `main.py`:
 
 ## 🎥 Example Outputs
 
-![Example Animation for 'now'-mode](final_output/Offenbach-W_01420_2025-04-09_17-00_2025-04-11_16-40_420_now.mp4)
+![Example Animation for 'now'-mode](final_output/Offenbach-W_01420_2025-04-18_18-10_2025-04-18_18-10_420_now.mp4)
 
-![Example Animation for 'historic'-mode](final_output/Offenbach-W_01420_2025-03-01_09-30_2025-03-02_09-10_420_historic.mp4)
+![Example Animation for 'historic'-mode](final_output/Offenbach-W_01420_2025-03-01_09-30_2025-03-05_09-30_420_historic.mp4)
 
 
 ## 🎶 Sonification Logic
@@ -74,9 +74,9 @@ Weather parameters are mapped to musical features using rules designed to convey
 | Track | Weather Feature   | Mapping Logic                                                                 |
 |-------|-------------------|-------------------------------------------------------------------------------|
 | 0     | **Main Melody**   | Temperature → pitch (based on seasonal scale), wind speed → velocity, pressure gradient → duration |
-| 1     | **Harmony**       | Derived from melody (lower pitch); plays short/long notes based on pressure trend |
-| 2     | **Chords**        | Seasonal chord progressions (I–IV–V–IV); transposed based on pressure gradient |
-| 3     | **Bass**          | Temperature (lower octave); volume modified by pressure (low = louder)       |
+| 1     | **Bass**       | Derived from melody (lower pitch); plays short/long notes based on pressure trend |
+| 2     | **Harmony**        | Seasonal chord progressions (I–IV–V–IV); transposed based on pressure gradient |
+| 3     | **Drums**          | Temperature (lower octave); volume modified by pressure (low = louder)       |
 | 4     | **Rain Sounds**   | Rain intensity → velocity of rhythmic notes                                  |
 
 ### 🎺 Notes & Instruments
