@@ -7,6 +7,8 @@ import pandas as pd
 from IPython.display import display, HTML
 from matplotlib.animation import FFMpegWriter
 
+#############################################################################################
+# --- Function to load weather and image data for a given time range in 'historic' mode ---
 def load_weather_and_image_data_historic(base_path, df, start_datetime, end_datetime, frames=5):
     """Finds and loads weather and image data for a given timeframe."""
     print(f"Loading data from {start_datetime} to {end_datetime}...")
@@ -45,7 +47,8 @@ def load_weather_and_image_data_historic(base_path, df, start_datetime, end_date
     
     return image_df, full_weather_data
 
-
+#################################################################################################
+# --- Function to load weather and image data for 'now' mode ---
 def load_weather_and_image_data_now(base_path, full_weather_data, frames=5):
     """Loads image + weather data for shared timestamps only."""
 
@@ -88,9 +91,22 @@ def load_weather_and_image_data_now(base_path, full_weather_data, frames=5):
 
     return image_df, weather_filtered, start_datetime_webcam, end_datetime_webcam
 
-
-
+#################################################################################################
+# --- Function to generate the weather animation ---
 def generate_weather_animation(station_name, image_df, full_weather_data, base_path, output_file_name,frames,fps):
+    """
+        Generates a weather animation video using webcam images and weather data.
+        Args:
+            station_name (str): Name of the weather station.
+            image_df (pd.DataFrame): DataFrame containing webcam image timestamps.
+            full_weather_data (pd.DataFrame): DataFrame containing weather data.
+            base_path (str): Base path where images are stored.
+            output_file_name (str): Output file name for the video.
+            frames (int): Number of frames for the animation.
+            fps (int): Frames per second for the animation.
+        Saves:
+            output_file_name (str): The generated video file.
+    """
     image_df = image_df.sort_values(by='DateTime').reset_index(drop=True)
     full_weather_data = full_weather_data.sort_values(by='MESS_DATUM').reset_index(drop=True)
     # Increase animation embedding limit
@@ -200,8 +216,8 @@ def generate_weather_animation(station_name, image_df, full_weather_data, base_p
 
     display(HTML(ani.to_jshtml()))
 
-
-
+#################################################################################################
+# --- Function to read station data from local folder ---
 def read_station_data(file_path):
     print(f"Reading data from {file_path}...")
 

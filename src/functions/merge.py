@@ -39,13 +39,20 @@ def merge_video_audio(video_file, audio_file, output_file):
         print("FFmpeg failed:", e)
 
 #####################################################################################
-
-
+# --- Function to merge weather data from DWD ---
 def merge_station_data(station_id,BASE_DIR, mode):
-
-
+    """
+    Merges weather data from DWD for a given station ID and mode ('now' or 'recent').
+    Args:
+        station_id (str): The station ID to merge data for.
+        BASE_DIR (Path): The base directory where the weather data is stored.
+        mode (str): The mode of operation ('now' or 'recent').
+    Returns:
+        pd.DataFrame: Merged DataFrame containing weather data.
+        str: Path to the merged file.
+    """
+    # === Set up directories ===
     WEATHER_DATA_DIR = BASE_DIR / "weatherdata" / f"{station_id}_now"
-
 
     # === Get file paths ===
     # NOW
@@ -67,14 +74,11 @@ def merge_station_data(station_id,BASE_DIR, mode):
     df_temp_recent = read_station_data(str(WEATHER_FILE_TEMP_recent))
     df_wind_recent = read_station_data(str(WEATHER_FILE_WIND_recent))
     df_precip_recent = read_station_data(str(WEATHER_FILE_PRECIP_recent))
-    print('df_precip_recent', df_precip_recent.head())
 
     # === Ensure consistent datetime format in all MESS_DATUM columns ===
     for df in [df_temp_now, df_wind_now, df_precip_now,
             df_temp_recent, df_wind_recent, df_precip_recent]:
         df['MESS_DATUM'] = pd.to_datetime(df['MESS_DATUM'], format="%Y%m%d %H%M", errors='coerce')
-    
-    print('df_precip_recent fixed?', df_precip_recent.head())
 
     # === Merge NOW data ===
     common_dates_now = set(df_temp_now['MESS_DATUM']) & set(df_wind_now['MESS_DATUM']) & set(df_precip_now['MESS_DATUM'])

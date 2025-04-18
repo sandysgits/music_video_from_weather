@@ -1,5 +1,7 @@
 import sys
-# Funktion zur Bestimmung der Jahreszeit basierend auf dem Datum
+
+#################################################################################
+# --- Function to get the season based on the date ---
 def get_season(date_str):
     month = int(date_str[4:6])  # Extrahiere den Monat
     if 3 <= month <= 5:
@@ -11,7 +13,8 @@ def get_season(date_str):
     else:
         return 'winter'  # Winter (f-moll)
  
-# Bestimme die Tonart basierend auf der Jahreszeit
+###################################################################################
+# --- Function to get the scale based on the season ---
 def get_scale(season):
     scales = {
         'spring': 'E major',
@@ -21,6 +24,8 @@ def get_scale(season):
     }
     return scales[season]
 
+###################################################################################
+# --- Function to get the min and max temperature for each season ---
 def get_minmax_temp(season):
     minmax = {
         'spring': (-5, 25),
@@ -30,7 +35,8 @@ def get_minmax_temp(season):
     }
     return minmax[season]
 
-# Gebe Töne der Tonart aus:
+###################################################################################
+# --- Function to get the notes of a scale ---
 def get_notes(scale):
     notes = {
         'E major': ['E1','E2','G#2',
@@ -56,14 +62,15 @@ def get_notes(scale):
     }
     return notes[scale]
 
-
-# function maps value (which is inbetween min_value and max_value) into new range from min_result to max_result
+###################################################################################
+# --- Function maps value (which is inbetween min_value and max_value) into new range from min_result to max_result ---
 def map_value(value,min_value,max_value,min_result,max_result):
     '''maps value (or array of values) from one range to another'''
     result = min_result + (value - min_value)/(max_value-min_value)*(max_result - min_result)
     return result
 
-
+##################################################################################
+# --- Function to get the MIDI instrument number from the instrument name ---
 def get_midi_instrument_number(instrument_name):
     # Dictionary mapping instrument names to MIDI numbers (General MIDI)
     INSTRUMENTS = {
@@ -203,6 +210,8 @@ def get_midi_instrument_number(instrument_name):
         print(f"Error: '{instrument_name}' is not a valid instrument name.")
         sys.exit(1)
 
+####################################################################################
+# --- Function to convert note names to MIDI numbers ---
 def str2midi(note):
     """
     Returns a note-to-MIDI mapping for notes from C0 to C8.
@@ -228,8 +237,8 @@ def str2midi(note):
     
     return note_map[note]
 
-
-# Function to get the chords (triads) for the 1st, 4th, and 5th degrees of a scale
+####################################################################################
+# --- Function to get the chords (triads) for the 1st, 4th, and 5th degrees of a scale ---
 def get_chords_for_scale(scale):
     """
     Returns the chords (triads) for the 1st, 4th, and 5th degrees of the given scale.

@@ -3,7 +3,13 @@ import os
 import zipfile
 from datetime import datetime, timedelta
 
+###################################################################
+# --- Function to download webcam images from DWD Website
 def download_webcam_images(station, res, output_path):
+    """
+    Downloads the latest webcam images for the given station,
+    resolution, and output path.
+    """
     stations = [station]
 
     # get current date and two days before
@@ -74,11 +80,8 @@ def download_webcam_images(station, res, output_path):
         print("⚠️ No webcam images found.")
         return None, None
 
-
-
-
-
-# --- Function to download station data from DWD Website for today 'now' or last years 'recent'
+###############################################################################
+# --- Function to download station data from DWD Website
 def download_station_data(station_id, output_path, type):
     """
     Downloads the latest weather station data for the given station ID,
