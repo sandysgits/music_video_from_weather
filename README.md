@@ -1,108 +1,126 @@
 # Weather Webcam Sonification
 
-TODO:
-How to use map_value? if global min max, then gets problematic -> should also include a if season ... ?
-- parameter which variables you want to plot and generate a sound to
+## 🚀 Motivation
 
-  - goals: CLI: python main.py -webcam "Offenbach-O" -station "Offenbach" -time "now/historic" (if historic: which timespan)
+Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization, real-world webcam imagery, and sound—we can create a richer, more immersive experience.
 
-  - delete files after downloading for 'now' ? --> auskommentieren main Zeile 41
+This project explores how **sonification** and **animation** can bring weather data to life, making it more intuitive, engaging, and accessible:
 
-  - Die vier Jahreszeiten: Tonarten davon bestimmen Tonart je nach Jahreszeit
+- 🌌 **Webcam imagery** shows what the weather *really looks like*, beyond just charts.
+- 📈 **Scientific line plots** visualize the meteorological data using clear and accurate graphs.
+- 🎵 **Sound (sonification)** maps weather parameters (like temperature or pressure) to musical elements.
+- 🌇 Combining all three modalities creates a unique, multi-sensory story of the weather.
+Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization, real-world webcam imagery, and sound—we can create a richer, more immersive experience.
 
-  - 3 Akkorde, 4er pattern pro Jahreszeit in Begleitung, grad>0 --> höhere Oktave, <0 niedriger
+## 📃 Project Overview
 
-  - Readme: before starting make sure ffmpeg and fluidsynth? are installed (see link)
+This project downloads **weather station data** and **webcam images** from the **Deutscher Wetterdienst (DWD)**. It then visualizes and sonifies this data, merging it into a compelling multimedia experience.
 
-  - Readme: run main when inside the directory
+### Features
 
-  - fluidsynth probieren
+- 📷 Download webcam images from DWD.
+- 🌌 Fetch weather station data (temperature, pressure, humidity, etc.).
+- 🎨 Visualize webcam and station data in an animated plot.
+- 🎶 Sonify weather data by generating a MIDI file.
+- 🎧 Convert MIDI to WAV (currently very basic conversion method, improvements need to be implemented with packages like fluidsynth).
+- 🎥 Combine animation and audio into an MP4 video.
 
-  - .wav Dateien als Input mit midi für Synthesizer und output .wav oder mp3, recherchieren
+## 🚀 Installation
 
-## Motivation
-Weather data is often represented in purely numerical or visual formats. However, by combining multiple sensory modalities—such as visualization, real-world webcam imagery, and sound—we can create a richer, more immersive experience. This project explores how sonification and animation can bring weather data to life, making it more intuitive, engaging, and accessible.
+Clone the repository and install dependencies via `pyproject.toml` or `requirements.txt`.
 
-Webcam data provides a direct visual representation of actual weather conditions, offering a perspective that goes beyond abstract graphs and numbers. By integrating live weather footage with data visualizations, we create a more comprehensive and realistic depiction of weather changes. Seeing the sky darken, clouds gather, or rain begin to fall adds context that a simple line graph cannot provide.
-
-Adding sound as another sensory layer enhances this experience even further. Through sonification, we can represent various meteorological changes dynamically, allowing us to hear the weather evolve over time. For example, a pressure drop could be mapped to a descending pitch to indicate worsening conditions, while temperature changes might be reflected in tonal shifts. These are just examples of how sonification can translate numerical weather patterns into an auditory experience, offering new ways to interpret and understand complex data.
-
-
-## Overview
-This project downloads **weather station data** and **webcam images** from the **Deutscher Wetterdienst (DWD)** for the same time period. We then **visualize** the data and **sonify** it, merging both into a compelling multimedia experience.
-
-## Features
-✅ **Download weather data** (temperature, pressure, humidity, etc.) from DWD.  
-✅ **Fetch webcam images** from DWD for the same time period.  
-✅ **Visualize both datasets** in an animated plot.  
-✅ **Sonify the weather data** and convert it into a MIDI file.  
-transform the midi into a wav file.
-✅ **Combine the animation with the sonified data** into an MP4 file.  
-
-## Example Dataset
-A small **example dataset** is included in the repository, containing:
-- A `.txt` file with **exemplary weather data**.
-- The **corresponding webcam images** from the same time period.
-
-📄 **Path:** `/data/sample_weather_data.txt` and associated images in `/data/webcam_images/`
-
-This dataset allows you to test the visualization and sonification features without downloading new data.
-
-## Installation
-To set up the environment automatically, use the provided YAML file:
-```sh
-conda env create -f environment/environment.yaml
-conda activate weather_sonifi
-```
-Alternatively, install dependencies manually with Conda:
-```sh
-conda create -n weather_sonifi python=3.9
-conda activate weather_sonifi
-conda install -c conda-forge matplotlib pandas pillow fluidsynth midi2audio
-```
-If you prefer **pip**, run:
-```sh
-pip install matplotlib pandas pillow fluidsynth midi2audio pretty_midi
+```bash
+pip install -r requirements.txt
 ```
 
-## Usage
-### **Option 1: Download Station and Webcam Data Live from DWD and Create Video**
-Fetch the latest weather and webcam data from DWD and generate the animated visualization:
-```sh
-python main.py --start "2025-02-19 00:00" --end "2025-02-20 00:00"
+Make sure `ffmpeg` and (optionally) `fluidsynth` are installed for audio rendering.
+
+## 📚 Usage
+
+Set options inside `main.py`:
+
+### Required:
+
+- `station_id`: Weather station ID ([see available IDs](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/historical/zehn_min_tu_Beschreibung_Stationen.txt))
+- `station`: Webcam station ID ([see available webcams](https://opendata.dwd.de/weather/webcam/))
+
+> Note: Matching webcam & station IDs is ideal but not required.
+
+### Modes
+
+#### **🕚 'now' mode**
+
+- Downloads **live** weather and webcam data.
+- Webcam data is only available for the **past 3 days**.
+- Generates an animation of the last \~72 hours.
+
+#### **📅 'historic' mode**
+
+- Uses pre-downloaded webcam data stored in:
+  ```
+  weatherdata/{STATION_NUMBER}_historic/webcam_data/
+  ```
+- Example dataset included: Offenbach-O & Offenbach-W (2025-03-01 09:30 to 2025-03-07 14:00).
+
+## 🎥 Example Outputs
+
+![Example Animation for 'now'-mode](final_output/Offenbach-W_01420_2025-04-09_17-00_2025-04-11_16-40_420_now.mp4)
+
+![Example Animation for 'historic'-mode](final_output/Offenbach-W_01420_2025-03-01_09-30_2025-03-02_09-10_420_historic.mp4)
+
+
+## 🎶 Sonification Logic
+
+Weather parameters are mapped to musical features using rules designed to convey both **emotion** and **data meaning**. The MIDI file contains 5 tracks:
+
+| Track | Weather Feature   | Mapping Logic                                                                 |
+|-------|-------------------|-------------------------------------------------------------------------------|
+| 0     | **Main Melody**   | Temperature → pitch (based on seasonal scale), wind speed → velocity, pressure gradient → duration |
+| 1     | **Harmony**       | Derived from melody (lower pitch); plays short/long notes based on pressure trend |
+| 2     | **Chords**        | Seasonal chord progressions (I–IV–V–IV); transposed based on pressure gradient |
+| 3     | **Bass**          | Temperature (lower octave); volume modified by pressure (low = louder)       |
+| 4     | **Rain Sounds**   | Rain intensity → velocity of rhythmic notes                                  |
+
+### 🎺 Notes & Instruments
+
+- **Temperature** determines the melody and harmony notes (mapped to seasonally appropriate musical scales).
+- **Wind speed** controls the note **velocity** (volume), from soft breezes to strong gusts.
+- **Pressure changes** affect rhythm:
+  - Rising pressure → short energetic notes
+  - Falling pressure → slower, heavier notes
+- **Chords** reflect the current season’s harmonic palette (e.g., major for spring/summer, minor for autumn/winter).
+- **Bass** notes reinforce low-frequency textures, with volume increasing during low-pressure (stormy) conditions.
+- **Rain** is mapped to soft or strong percussive note-like effects, based on real intensity (0–5 scale).
+
+
+- MIDI is converted to WAV using a basic synth or a GUI tool like [Signal](https://signal.vercel.app/)
+
+## 💚 How to Use
+
+1. Clone the repo
+2. Install dependencies
+3. Set options in `main.py`
+4. Run the main script
+
+```bash
+python main.py
 ```
 
-### **Option 2: Use Example Data**
-If you want to generate the visualization using the included example dataset:
-```sh
-python main.py --use-example-data
-```
-This will process the pre-downloaded weather data and corresponding webcam images.
+## ❌ Current Limitations
 
-### **Generating the Final Video with Audio**
-To convert the MIDI file to a `.wav` file and merge it with the animation:
-```sh
-python merge_audio_video.py
-```
-This outputs `final_weather_video.mp4` with synchronized sonification.
+- MIDI-to-WAV conversion is basic
+  - Ideally use `fluidsynth` or other external synth for better quality
+- Webcam images only available from DWD for the past 3 days
+  - No historic webcam dataset can be provided in this repo
+- Limited set of webcam locations
+- You can inspect or remix the MIDI file properly using tools like:
+  - [https://signal.vercel.app/](https://signal.vercel.app/)
 
-https://signal.vercel.app/ - you can have a look at the created midi file here for example. also other applications
+## 🙌 Contribution
 
-## Example Output
-![Example Animation](assets/example_animation.gif)
+Fork the repo, open a PR, or suggest improvements. We'd love to see your ideas!
 
-## Environment File
-The `environment.yaml` file is stored in the `environment/` directory and can be used to set up the project easily. 
+## 🌟 Supported by UPAS
 
-📄 **Path:** `environment/environment.yaml`
-
-## Contribution
-Feel free to fork, improve, or extend this project. Open a pull request if you have improvements or new features.
-
-
-## License
-???
-
-## Supported by UPAS
-UPAS is a ...
+This project is supported by the **UPAS Student Idea Pot 2024**. Learn more at: [https://www.meteo-upas.de/](https://www.meteo-upas.de/)
 
