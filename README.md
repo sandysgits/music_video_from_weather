@@ -6,7 +6,7 @@ Weather data is often represented in purely numerical or visual formats. However
 
 This project explores how **sonification** and **animation** can bring weather data to life, making it more intuitive, engaging, and accessible:
 
-- 🌌 **Webcam imagery** shows what the weather *really looks like*, beyond just charts.
+- 🌌 **Webcam imagery** shows what the weather really looks like, beyond just charts.
 - 📈 **Scientific line plots** visualize the meteorological data using clear and accurate graphs.
 - 🎵 **Sound (sonification)** maps weather parameters (like temperature or pressure) to musical elements.
 - 🌇 Combining all three modalities creates a unique, multi-sensory story of the weather.
@@ -33,8 +33,6 @@ Clone the repository and install dependencies via `pyproject.toml` or `requireme
 pip install -r requirements.txt
 ```
 
-Make sure `ffmpeg` and (optionally) `fluidsynth` are installed for audio rendering.
-
 ## 📚 Usage
 
 Set options inside `main.py`:
@@ -44,7 +42,7 @@ Set options inside `main.py`:
 - `station_id`: Weather station ID ([see available IDs](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/10_minutes/air_temperature/historical/zehn_min_tu_Beschreibung_Stationen.txt))
 - `station`: Webcam station ID ([see available webcams](https://opendata.dwd.de/weather/webcam/))
 
-> Note: Matching webcam & station IDs is ideal but not required.
+> Note: You can combine a webcam station with any weather station, e.g. for the webcam 'Offenbach-W', you can use station '01420' (Frankfurt airport), '01424' (Frankfurt Campus Westend) or '07341' (Offenbach Wetterpark).
 
 ### Modes
 
