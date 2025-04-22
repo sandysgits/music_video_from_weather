@@ -33,7 +33,7 @@ We recommend using uv (https://pypi.org/project/uv/) via `pyproject.toml`.
 ```bash
 pip install uv
 cd music_video_from_weather
-uv init
+uv sync
 ```
 
 All packages and dependencies should be resolved now. If not simply add the required package using
@@ -74,7 +74,7 @@ Set options inside `main.py`:
 To run the script, go to the Terminal and make sure you are in the same directory as the main.py file.
 Now run this in you Terminal if you are using uv
 ```bash
-uv run main.py
+uv run python main.py
 ```
 
 ## 🎥 Example Outputs
