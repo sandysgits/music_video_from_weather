@@ -27,10 +27,19 @@ This project downloads **weather station data** and **webcam images** from the *
 
 ## 🚀 Installation
 
-Clone the repository and install dependencies via `pyproject.toml` or `requirements.txt`.
+Clone the repository and install dependencies. 
+We recommend using uv (https://pypi.org/project/uv/) via `pyproject.toml`.
 
 ```bash
-pip install -r requirements.txt
+pip install uv
+cd music_video_from_weather
+uv init
+```
+
+All packages and dependencies should be resolved now. If not simply add the required package using
+
+```bash
+uv add package_name
 ```
 
 ## 📚 Usage
