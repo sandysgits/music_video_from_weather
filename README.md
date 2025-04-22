@@ -1,4 +1,5 @@
-# Creating Music Videos from the weather
+# Weather Webcam Sonification
+## - Creating Music Videos from weather data -
 
 ## 🚀 Motivation
 
@@ -28,7 +29,7 @@ This project downloads **weather station data** and **webcam images** from the *
 ## 🚀 Installation
 
 Clone the repository and install dependencies. 
-We recommend using uv (https://pypi.org/project/uv/) via `pyproject.toml`.
+We recommend using uv (https://pypi.org/project/uv/) to easily set up the project via `pyproject.toml`.
 
 ```bash
 pip install uv
