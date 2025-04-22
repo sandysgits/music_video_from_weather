@@ -62,9 +62,9 @@ Set options inside `main.py`:
 
 ## 🎥 Example Outputs
 
-![Example Animation for 'now'-mode](final_output/Offenbach-W_01420_2025-04-18_18-10_2025-04-18_18-10_420_now.mp4)
+![Example Animation for 'now'-mode](final_output/Offenbach-W_01420_2025-04-20_09-20_2025-04-22_09-10_420_now.mp4)
 
-![Example Animation for 'historic'-mode](final_output/Offenbach-W_01420_2025-03-01_09-30_2025-03-05_09-30_420_historic.mp4)
+![Example Animation for 'historic'-mode](final_output/Offenbach-W_01420_2025-03-01_09-30_2025-03-07_14-00_420_historic.mp4)
 
 
 ## 🎶 Sonification Logic
