@@ -69,6 +69,14 @@ Set options inside `main.py`:
   ```
 - Example dataset included: Offenbach-O & Offenbach-W (2025-03-01 09:30 to 2025-03-07 14:00).
 
+### Execution
+
+To run the script, go to the Terminal and make sure you are in the same directory as the main.py file.
+Now run this in you Terminal if you are using uv
+```bash
+uv run main.py
+```
+
 ## 🎥 Example Outputs
 
 ![Example Animation for 'now'-mode](final_output/Offenbach-W_01420_2025-04-20_09-20_2025-04-22_09-10_420_now.mp4)
