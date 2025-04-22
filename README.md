@@ -1,4 +1,4 @@
-# Weather Webcam Sonification
+# Creating Music Videos from the weather
 
 ## 🚀 Motivation
 
@@ -116,10 +116,6 @@ Weather parameters are mapped to musical features using rules designed to convey
 2. Install dependencies
 3. Set options in `main.py`
 4. Run the main script
-
-```bash
-python main.py
-```
 
 ## ❌ Current Limitations
 
