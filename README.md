@@ -73,7 +73,7 @@ Set options inside `main.py`:
 ### Instruments
 
 Choose the instruments you want for the different tracks: Melody, Bass, Harmony, Drums, Rain Sounds
-> Here is a list with all the available instruments: ![Midi Instruments](https://www.ccarh.org/courses/253/handout/gminstruments)
+> Here is a list with all the available instruments: ![Midi Instruments]([https://www.ccarh.org/courses/253/handout/gminstruments](https://fmslogo.sourceforge.io/manual/midi-instrument.html))
 
 ### Execution
 
