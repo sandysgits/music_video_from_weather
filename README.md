@@ -99,7 +99,8 @@ Weather parameters are mapped to musical features using rules designed to convey
 
 ### 🎺 Notes & Instruments
 
-- **Temperature** determines the melody and harmony notes (mapped to seasonally appropriate musical scales).
+- **Four Seasons** by Vivaldi determines the scale of each season
+- **Temperature** determines the melody notes (mapped to seasonally appropriate musical scales).
 - **Wind speed** controls the note **velocity** (volume), from soft breezes to strong gusts.
 - **Pressure changes** affect rhythm:
   - Rising pressure → short energetic notes
