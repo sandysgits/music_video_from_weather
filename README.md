@@ -70,6 +70,11 @@ Set options inside `main.py`:
   ```
 - Example dataset included: Offenbach-O & Offenbach-W (2025-03-01 09:30 to 2025-03-07 14:00).
 
+### Instruments
+
+Choose the instruments you want for the different tracks: Melody, Bass, Harmony, Drums, Rain Sounds
+> Here is a list with all the available instruments: ![Midi Instruments](https://www.ccarh.org/courses/253/handout/gminstruments/)
+
 ### Execution
 
 To run the script, go to the Terminal and make sure you are in the same directory as the main.py file.
@@ -118,6 +123,9 @@ Weather parameters are mapped to musical features using rules designed to convey
 2. Install dependencies
 3. Set options in `main.py`
 4. Run the main script
+5. Your output is in the final_output folder
+
+(If you want to use another synthesizer, you can find the midi file in the assets folder. There you also have the video without sound.)
 
 ## ❌ Current Limitations
 
